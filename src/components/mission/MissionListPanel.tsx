@@ -37,13 +37,10 @@ function getEffectiveStatus(
 
   if (dbStatus === 'completed' || dbStatus === 'completed_extra') return 'completed'
 
-  // Locked levels have no playable missions
   if (levelStatus === 'locked') return 'locked'
 
-  // First mission: always playable if level is active
   if (idx === 0) return 'playable'
 
-  // Subsequent missions: only if the previous one is completed
   const prevSlug = missions[idx - 1].slug
   const prevStatus = progressMap[prevSlug]
   if (prevStatus === 'completed' || prevStatus === 'completed_extra') return 'playable'
@@ -59,14 +56,14 @@ export function MissionListPanel({
   levelStatus,
 }: Props) {
   return (
-    <div className="flex flex-col h-full bg-[#0d0f1f] border-l border-[#534AB7]/20">
+    <div className="flex flex-col h-full bg-white border-l border-[#E0E0F0]">
       {/* ── Panel header ─────────────────────────────────────── */}
-      <div className="flex-shrink-0 px-5 py-4 border-b border-[#534AB7]/20">
+      <div className="flex-shrink-0 px-5 py-4 border-b border-[#E0E0F0] bg-[#F8F9FF]">
         <div className="flex items-center gap-2.5">
           <span className="text-2xl leading-none">{levelEmoji}</span>
           <div>
-            <h2 className="text-white font-bold text-base leading-tight">{levelTitle}</h2>
-            <p className="text-slate-500 text-[11px] mt-0.5">
+            <h2 className="text-[#1a1a2e] font-bold text-base leading-tight">{levelTitle}</h2>
+            <p className="text-[#4a4a6a] text-[11px] mt-0.5">
               {missions.length > 0
                 ? `${missions.length} misión${missions.length !== 1 ? 'es' : ''}`
                 : 'Sin misiones aún'}
@@ -80,8 +77,8 @@ export function MissionListPanel({
         {missions.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center py-16 gap-3">
             <span className="text-5xl">🔧</span>
-            <p className="text-white font-semibold text-sm">¡Próximamente!</p>
-            <p className="text-slate-500 text-xs leading-relaxed max-w-[200px]">
+            <p className="text-[#1a1a2e] font-semibold text-sm">¡Próximamente!</p>
+            <p className="text-[#4a4a6a] text-xs leading-relaxed max-w-[200px]">
               Las misiones de este mundo están en construcción. ¡Vuelve pronto!
             </p>
           </div>
@@ -126,20 +123,20 @@ function MissionItem({
     return (
       <Link
         href={`/app/mision/${mission.id}`}
-        className="group flex items-start gap-3 bg-[#0d2b1a] border border-[#00d4a1]/30 hover:border-[#00d4a1]/60 rounded-xl p-3.5 transition-all duration-200 block"
+        className="group flex items-start gap-3 bg-[#E8F8F5] border border-[#00B894]/30 hover:border-[#00B894]/60 rounded-xl p-3.5 transition-all duration-200 block"
       >
-        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#00d4a1]/20 flex items-center justify-center mt-0.5">
-          <span className="text-[#00d4a1] text-sm font-bold leading-none">✓</span>
+        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#00B894]/20 flex items-center justify-center mt-0.5">
+          <span className="text-[#00B894] text-sm font-bold leading-none">✓</span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[#00d4a1] font-semibold text-sm leading-tight truncate">
+          <p className="text-[#007a5e] font-semibold text-sm leading-tight truncate">
             {mission.title}
           </p>
-          <p className="text-[#00d4a1]/55 text-xs mt-0.5 leading-snug line-clamp-2">
+          <p className="text-[#007a5e]/60 text-xs mt-0.5 leading-snug line-clamp-2">
             {mission.objective}
           </p>
         </div>
-        <span className="flex-shrink-0 text-[#00d4a1]/40 text-[10px] font-mono self-center group-hover:text-[#00d4a1]/70 transition-colors">
+        <span className="flex-shrink-0 text-[#00B894]/40 text-[10px] font-mono self-center group-hover:text-[#00B894]/70 transition-colors">
           {num}
         </span>
       </Link>
@@ -148,19 +145,19 @@ function MissionItem({
 
   if (status === 'playable') {
     return (
-      <div className="flex items-start gap-3 bg-[#1a1a2e] border border-[#534AB7] rounded-xl p-3.5 shadow-[0_0_12px_rgba(83,74,183,0.2)]">
-        <span className="flex-shrink-0 text-slate-500 font-mono text-[11px] w-5 text-right mt-1">
+      <div className="flex items-start gap-3 bg-[#EEF0FF] border border-[#534AB7]/40 rounded-xl p-3.5 shadow-[0_2px_8px_rgba(83,74,183,0.1)]">
+        <span className="flex-shrink-0 text-[#534AB7]/50 font-mono text-[11px] w-5 text-right mt-1">
           {num}
         </span>
         <div className="flex-1 min-w-0">
-          <p className="text-white font-semibold text-sm leading-tight">{mission.title}</p>
-          <p className="text-slate-400 text-xs mt-0.5 leading-snug line-clamp-2">
+          <p className="text-[#1a1a2e] font-semibold text-sm leading-tight">{mission.title}</p>
+          <p className="text-[#4a4a6a] text-xs mt-0.5 leading-snug line-clamp-2">
             {mission.objective}
           </p>
         </div>
         <Link
           href={`/app/mision/${mission.id}`}
-          className="flex-shrink-0 bg-[#00d4a1] hover:bg-[#00b88e] active:bg-[#009e76] text-[#0d0d1a] font-bold text-xs px-3.5 py-2 rounded-lg transition-colors self-center"
+          className="flex-shrink-0 bg-[#00B894] hover:bg-[#009e7e] active:bg-[#008060] text-white font-bold text-xs px-3.5 py-2 rounded-lg transition-colors self-center"
         >
           ¡Jugar!
         </Link>
@@ -170,13 +167,13 @@ function MissionItem({
 
   // locked
   return (
-    <div className="flex items-start gap-3 bg-[#111] border border-[#2a2a3a] rounded-xl p-3.5 opacity-50 select-none">
-      <span className="flex-shrink-0 text-slate-700 font-mono text-[11px] w-5 text-right mt-1">
+    <div className="flex items-start gap-3 bg-[#F5F5F8] border border-[#E0E0F0] rounded-xl p-3.5 opacity-55 select-none">
+      <span className="flex-shrink-0 text-[#4a4a6a]/30 font-mono text-[11px] w-5 text-right mt-1">
         {num}
       </span>
       <div className="flex-1 min-w-0">
-        <p className="text-slate-600 font-semibold text-sm leading-tight">{mission.title}</p>
-        <p className="text-slate-700 text-xs mt-0.5 leading-snug line-clamp-2">
+        <p className="text-[#4a4a6a]/60 font-semibold text-sm leading-tight">{mission.title}</p>
+        <p className="text-[#4a4a6a]/40 text-xs mt-0.5 leading-snug line-clamp-2">
           {mission.objective}
         </p>
       </div>

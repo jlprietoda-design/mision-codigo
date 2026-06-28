@@ -15,7 +15,6 @@ const DIR_ROTATION: Record<Direction, number> = {
 interface Props {
   mapConfig: MapConfig
   currentStep: ExecutionStep | null
-  /** IDs of items collected up to (and including) the current step */
   collectedItemIds: string[]
 }
 
@@ -81,10 +80,10 @@ export function MissionGrid({ mapConfig, currentStep, collectedItemIds }: Props)
                   className={[
                     'rounded-xl flex items-center justify-center relative overflow-hidden',
                     isWall
-                      ? 'bg-[#2d2d3a] border-2 border-[#3d3d4a]'
+                      ? 'bg-[#D8D8E8] border-2 border-[#C0C0D0]'
                       : isGoal
-                        ? 'bg-[#0a2518] border-2 border-[#00d4a1]/70 shadow-[inset_0_0_12px_rgba(0,212,161,0.2)]'
-                        : 'bg-[#181828] border border-[#534AB7]/25',
+                        ? 'bg-[#E8F8F5] border-2 border-[#00B894]/60 shadow-[inset_0_0_10px_rgba(0,184,148,0.15)]'
+                        : 'bg-white border border-[#D8DAFF]',
                   ].join(' ')}
                 >
                   {isWall && (
@@ -107,13 +106,12 @@ export function MissionGrid({ mapConfig, currentStep, collectedItemIds }: Props)
                   )}
                   {isStart && (
                     <span
-                      className="text-slate-600 font-mono select-none"
+                      className="text-[#534AB7]/40 font-mono select-none"
                       style={{ fontSize: Math.max(8, cellSize * 0.16) }}
                     >
                       INICIO
                     </span>
                   )}
-                  {/* Grid coordinate (dev aid — hidden for now) */}
                 </div>
               )
             })
@@ -132,9 +130,9 @@ export function MissionGrid({ mapConfig, currentStep, collectedItemIds }: Props)
             zIndex: 10,
           }}
         >
-          {/* Glow ring beneath Codi */}
+          {/* Subtle ring beneath Codi */}
           <div
-            className="absolute rounded-full bg-[#534AB7]/30"
+            className="absolute rounded-full bg-[#534AB7]/15"
             style={{ width: cellSize * 0.7, height: cellSize * 0.7 }}
           />
           <span

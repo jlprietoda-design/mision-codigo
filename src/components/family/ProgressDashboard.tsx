@@ -36,23 +36,25 @@ export function ProgressDashboard({
   const hasProgress = completedMissions.length > 0 || badges.length > 0
 
   return (
-    <div className="min-h-screen bg-[#0d0d1a] text-white">
+    <div className="min-h-[calc(100vh-4rem)] bg-[#F8F9FF] text-[#1a1a2e]">
       {/* ── Header ──────────────────────────────────────────────── */}
-      <header className="border-b border-[#534AB7]/25 px-6 py-4 flex items-center gap-4">
+      <header className="bg-white border-b border-[#E0E0F0] px-6 py-4 flex items-center gap-4">
         <Link
           href="/app/familia"
-          className="text-slate-400 hover:text-white transition text-sm"
+          className="text-[#4a4a6a] hover:text-[#534AB7] transition text-sm"
         >
           ← Familia
         </Link>
         <div className="flex items-center gap-3 ml-2">
-          <span className="text-3xl leading-none">{childAvatar}</span>
+          <div className="w-10 h-10 rounded-full bg-[#EEF0FF] flex items-center justify-center">
+            <span className="text-2xl leading-none">{childAvatar}</span>
+          </div>
           <div>
-            <h1 className="text-white font-bold text-lg leading-tight">
+            <h1 className="text-[#1a1a2e] font-bold text-lg leading-tight">
               Progreso de{' '}
-              <span className="text-[#00d4a1]">{childAlias}</span>
+              <span className="text-[#534AB7]">{childAlias}</span>
             </h1>
-            <p className="text-slate-500 text-xs">
+            <p className="text-[#4a4a6a] text-xs">
               Nivel {stats?.currentLevel ?? 0} · {stats?.missionsCompleted ?? 0} misiones completadas
             </p>
           </div>
@@ -65,15 +67,15 @@ export function ProgressDashboard({
         {!hasProgress && (
           <div className="text-center py-20">
             <div className="text-7xl mb-4">🚀</div>
-            <h2 className="text-2xl font-bold text-white mb-2">
+            <h2 className="text-2xl font-bold text-[#1a1a2e] mb-2">
               ¡La aventura está a punto de comenzar!
             </h2>
-            <p className="text-slate-400 text-sm max-w-xs mx-auto leading-relaxed">
+            <p className="text-[#4a4a6a] text-sm max-w-xs mx-auto leading-relaxed">
               {childAlias} todavía no ha completado ninguna misión. ¡Abre el mapa y empieza a explorar!
             </p>
             <Link
               href="/app/mapa"
-              className="mt-6 inline-flex items-center gap-2 bg-[#00d4a1] hover:bg-[#00b88e] text-[#0d0d1a] font-bold px-8 py-3 rounded-xl transition text-sm"
+              className="mt-6 inline-flex items-center gap-2 bg-[#00B894] hover:bg-[#009e7e] text-white font-bold px-8 py-3 rounded-xl transition text-sm"
             >
               ⚡ Ir al mapa de mundos
             </Link>
@@ -84,7 +86,7 @@ export function ProgressDashboard({
           <>
             {/* ── Stats row ─────────────────────────────────────────── */}
             <section>
-              <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">
+              <h2 className="text-xs font-semibold text-[#4a4a6a]/60 uppercase tracking-wider mb-4">
                 Estadísticas
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -115,7 +117,7 @@ export function ProgressDashboard({
             {/* ── Badges ────────────────────────────────────────────── */}
             {badges.length > 0 && (
               <section>
-                <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">
+                <h2 className="text-xs font-semibold text-[#4a4a6a]/60 uppercase tracking-wider mb-4">
                   Insignias obtenidas
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -125,16 +127,16 @@ export function ProgressDashboard({
                     return (
                       <div
                         key={row.id}
-                        className="bg-[#1a1a2e] border border-[#534AB7]/40 rounded-2xl p-4 flex flex-col items-center gap-2 text-center"
+                        className="bg-white border border-[#E0E0F0] rounded-2xl p-4 flex flex-col items-center gap-2 text-center shadow-[0_2px_8px_rgba(83,74,183,0.06)]"
                       >
                         <span className="text-4xl leading-none">{badge.icon}</span>
-                        <p className="text-white text-sm font-semibold leading-tight">
+                        <p className="text-[#1a1a2e] text-sm font-semibold leading-tight">
                           {badge.name}
                         </p>
-                        <p className="text-slate-500 text-[11px] leading-snug">
+                        <p className="text-[#4a4a6a] text-[11px] leading-snug">
                           {badge.description}
                         </p>
-                        <p className="text-slate-600 text-[10px] mt-auto pt-1 border-t border-[#534AB7]/20 w-full">
+                        <p className="text-[#4a4a6a]/40 text-[10px] mt-auto pt-1 border-t border-[#E0E0F0] w-full">
                           {formatDate(row.earned_at)}
                         </p>
                       </div>
@@ -147,36 +149,36 @@ export function ProgressDashboard({
             {/* ── Completed missions ────────────────────────────────── */}
             {completedMissions.length > 0 && (
               <section>
-                <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">
+                <h2 className="text-xs font-semibold text-[#4a4a6a]/60 uppercase tracking-wider mb-4">
                   Misiones completadas
                 </h2>
                 <div className="flex flex-col gap-2">
                   {completedMissions.map((row) => (
                     <div
                       key={row.id}
-                      className="bg-[#1a1a2e] border border-[#534AB7]/25 rounded-xl p-4 flex items-start gap-4"
+                      className="bg-white border border-[#E0E0F0] rounded-xl p-4 flex items-start gap-4 shadow-[0_1px_4px_rgba(83,74,183,0.05)]"
                     >
                       <div className="text-2xl leading-none mt-0.5">✅</div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-white font-semibold text-sm leading-tight">
+                        <p className="text-[#1a1a2e] font-semibold text-sm leading-tight">
                           {row.missions?.title ?? 'Misión completada'}
                         </p>
                         {row.missions?.concept && (
-                          <p className="text-slate-400 text-xs mt-1 leading-snug">
+                          <p className="text-[#4a4a6a] text-xs mt-1 leading-snug">
                             💡 {row.missions.concept}
                           </p>
                         )}
                       </div>
                       <div className="flex-shrink-0 text-right">
-                        <p className="text-[#00d4a1] text-xs font-semibold">
+                        <p className="text-[#00B894] text-xs font-semibold">
                           {row.attempts === 1 ? '⚡ 1 intento' : `${row.attempts} intentos`}
                         </p>
                         {row.hints_used > 0 && (
-                          <p className="text-yellow-600 text-[10px] mt-0.5">
+                          <p className="text-amber-500 text-[10px] mt-0.5">
                             {row.hints_used} pista{row.hints_used !== 1 ? 's' : ''}
                           </p>
                         )}
-                        <p className="text-slate-600 text-[10px] mt-1">
+                        <p className="text-[#4a4a6a]/40 text-[10px] mt-1">
                           {formatDate(row.completed_at)}
                         </p>
                       </div>
@@ -204,17 +206,17 @@ function StatCard({
   small?: boolean
 }) {
   return (
-    <div className="bg-[#1a1a2e] border border-[#534AB7]/30 rounded-xl p-4 flex flex-col items-center gap-1 text-center">
+    <div className="bg-white border border-[#E0E0F0] rounded-xl p-4 flex flex-col items-center gap-1 text-center shadow-[0_2px_8px_rgba(83,74,183,0.06)]">
       <span className="text-2xl leading-none">{icon}</span>
       <p
         className={[
-          'font-bold text-white leading-tight',
+          'font-bold text-[#1a1a2e] leading-tight',
           small ? 'text-sm' : 'text-2xl',
         ].join(' ')}
       >
         {value}
       </p>
-      <p className="text-slate-500 text-[11px] leading-snug">{label}</p>
+      <p className="text-[#4a4a6a]/60 text-[11px] leading-snug">{label}</p>
     </div>
   )
 }

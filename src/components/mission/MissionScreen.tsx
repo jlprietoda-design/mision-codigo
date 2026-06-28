@@ -12,7 +12,7 @@ import { saveMissionProgress, awardBadge } from '@/app/actions/progress'
 import { MissionGrid } from './MissionGrid'
 import { BlockPalette } from './BlockPalette'
 
-const STEP_DELAY = 400 // ms per animation step
+const STEP_DELAY = 400
 
 function sleep(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms))
@@ -29,7 +29,7 @@ export function MissionScreen({ mission }: Props) {
   const [isAnimating, setIsAnimating] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [showFailure, setShowFailure] = useState(false)
-  const [hintIdx, setHintIdx] = useState(-1) // -1 = no hint shown yet
+  const [hintIdx, setHintIdx] = useState(-1)
 
   const cancelRef = useRef(false)
   const mountedRef = useRef(true)
@@ -46,18 +46,14 @@ export function MissionScreen({ mission }: Props) {
     router.push('/app/mapa')
   }
 
-  // Current execution step (null = initial state, no execution yet)
   const currentStep = executionResult ? executionResult.steps[currentStepIdx] ?? null : null
 
-  // Items collected up to and including the current step
   const collectedItemIds = useMemo<string[]>(() => {
     if (!executionResult) return []
     return executionResult.steps
       .slice(0, currentStepIdx + 1)
       .flatMap((s) => (s.collected ? [s.collected] : []))
   }, [executionResult, currentStepIdx])
-
-  // ── Handlers ────────────────────────────────────────────────
 
   function addBlock(type: string) {
     setProgramBlocks((prev) => (prev.length < 20 ? [...prev, { type }] : prev))
@@ -136,28 +132,26 @@ export function MissionScreen({ mission }: Props) {
     }
   }
 
-  // ── Render ──────────────────────────────────────────────────
-
   const activeHint = hintIdx >= 0 ? mission.hints[hintIdx] : null
 
   return (
-    <div className="flex flex-col h-screen bg-[#0d0d1a] overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-4rem)] bg-[#F8F9FF] overflow-hidden">
 
       {/* ── Top bar ─────────────────────────────────────────── */}
-      <header className="flex-shrink-0 flex items-center justify-between px-4 py-2.5 bg-[#0d0d1a] border-b border-[#534AB7]/25">
+      <header className="flex-shrink-0 flex items-center justify-between px-4 py-2.5 bg-white border-b border-[#E0E0F0] shadow-[0_1px_4px_rgba(83,74,183,0.06)]">
         <button
           onClick={handleGoToMap}
-          className="flex items-center gap-1.5 text-slate-400 hover:text-white transition text-sm"
+          className="flex items-center gap-1.5 text-[#4a4a6a] hover:text-[#534AB7] transition text-sm"
         >
           ← Mapa
         </button>
         <div className="text-center">
-          <h1 className="text-white font-bold text-sm leading-tight">{mission.title}</h1>
-          <p className="text-slate-600 text-[11px]">Nivel {mission.levelId} · Misión {mission.order}</p>
+          <h1 className="text-[#1a1a2e] font-bold text-sm leading-tight">{mission.title}</h1>
+          <p className="text-[#4a4a6a] text-[11px]">Nivel {mission.levelId} · Misión {mission.order}</p>
         </div>
-        <div className="text-slate-600 text-xs text-right">
+        <div className="text-[#4a4a6a] text-xs text-right">
           {programBlocks.length > 0 && !isAnimating && (
-            <span className="text-slate-500">{programBlocks.length} bloques</span>
+            <span className="text-[#4a4a6a]/70">{programBlocks.length} bloques</span>
           )}
         </div>
       </header>
@@ -166,47 +160,47 @@ export function MissionScreen({ mission }: Props) {
       <div className="flex flex-1 overflow-hidden">
 
         {/* Left: story + info ───────────────────────────────── */}
-        <aside className="w-[260px] flex-shrink-0 flex flex-col overflow-y-auto border-r border-[#534AB7]/20 bg-[#0d0f1f]">
+        <aside className="w-[260px] flex-shrink-0 flex flex-col overflow-y-auto border-r border-[#E0E0F0] bg-white">
           <div className="p-4 space-y-4 flex-1">
             {/* Story */}
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xl">🤖</span>
-                <h2 className="text-white font-bold text-sm">Historia</h2>
+                <h2 className="text-[#1a1a2e] font-bold text-sm">Historia</h2>
               </div>
-              <p className="text-slate-400 text-xs leading-relaxed">{mission.story}</p>
+              <p className="text-[#4a4a6a] text-xs leading-relaxed">{mission.story}</p>
             </div>
 
             {/* Objective */}
-            <div className="bg-[#1a1a2e] border border-[#534AB7]/30 rounded-xl p-3">
+            <div className="bg-[#EEF0FF] border border-[#534AB7]/20 rounded-xl p-3">
               <p className="text-xs font-semibold text-[#534AB7] uppercase tracking-wider mb-1">
                 Objetivo
               </p>
-              <p className="text-slate-200 text-xs leading-relaxed">{mission.objective}</p>
+              <p className="text-[#1a1a2e] text-xs leading-relaxed">{mission.objective}</p>
             </div>
 
             {/* Concept */}
-            <div className="bg-[#0a1a2a] border border-[#00d4a1]/20 rounded-xl p-3">
-              <p className="text-xs font-semibold text-[#00d4a1] uppercase tracking-wider mb-1">
+            <div className="bg-[#E8F8F5] border border-[#00B894]/20 rounded-xl p-3">
+              <p className="text-xs font-semibold text-[#00B894] uppercase tracking-wider mb-1">
                 💡 Concepto
               </p>
-              <p className="text-slate-300 text-xs leading-relaxed">{mission.concept}</p>
+              <p className="text-[#1a1a2e] text-xs leading-relaxed">{mission.concept}</p>
             </div>
 
-            {/* Hint (shown after clicking Pista) */}
+            {/* Hint */}
             {activeHint && (
-              <div className="bg-yellow-900/20 border border-yellow-600/40 rounded-xl p-3">
-                <p className="text-xs font-semibold text-yellow-400 mb-1">
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                <p className="text-xs font-semibold text-amber-600 mb-1">
                   💡 Pista {hintIdx + 1}/{mission.hints.length}
                 </p>
-                <p className="text-yellow-200 text-xs leading-relaxed">{activeHint}</p>
+                <p className="text-amber-800 text-xs leading-relaxed">{activeHint}</p>
               </div>
             )}
           </div>
         </aside>
 
         {/* Center: mission grid ─────────────────────────────── */}
-        <main className="flex-1 min-w-0 bg-[#0c0c1e]">
+        <main className="flex-1 min-w-0 bg-[#EEF0FF]">
           <MissionGrid
             mapConfig={mission.mapConfig}
             currentStep={currentStep}
@@ -215,7 +209,7 @@ export function MissionScreen({ mission }: Props) {
         </main>
 
         {/* Right: block palette ────────────────────────────── */}
-        <aside className="w-[240px] flex-shrink-0 border-l border-[#534AB7]/20 bg-[#0d0f1f]">
+        <aside className="w-[240px] flex-shrink-0 border-l border-[#E0E0F0] bg-white">
           <BlockPalette
             availableBlocks={mission.availableBlocks}
             programBlocks={programBlocks}
@@ -231,32 +225,31 @@ export function MissionScreen({ mission }: Props) {
 
       {/* ── Success modal ───────────────────────────────────── */}
       {showSuccess && (
-        <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 px-4">
-          <div className="bg-[#12122a] border border-[#00d4a1]/40 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 px-4">
+          <div className="bg-white border border-[#E0E0F0] rounded-2xl p-8 max-w-sm w-full text-center shadow-[0_8px_40px_rgba(83,74,183,0.2)]">
             <div className="text-6xl mb-1 animate-bounce">🎉</div>
             <div className="text-4xl mb-4">⭐⭐⭐</div>
-            <h2 className="text-3xl font-bold text-white mb-2">¡Misión superada!</h2>
-            <p className="text-slate-400 text-sm mb-5">
+            <h2 className="text-3xl font-bold text-[#1a1a2e] mb-2">¡Misión superada!</h2>
+            <p className="text-[#4a4a6a] text-sm mb-5">
               Completaste la misión {mission.order} del nivel {mission.levelId}.
             </p>
 
-            {/* Concept learned */}
-            <div className="bg-[#0a2518] border border-[#00d4a1]/30 rounded-xl p-4 mb-6 text-left">
-              <p className="text-[#00d4a1] text-xs font-semibold mb-1">💡 Aprendiste</p>
-              <p className="text-slate-300 text-sm leading-relaxed">{mission.concept}</p>
+            <div className="bg-[#E8F8F5] border border-[#00B894]/30 rounded-xl p-4 mb-6 text-left">
+              <p className="text-[#00B894] text-xs font-semibold mb-1">💡 Aprendiste</p>
+              <p className="text-[#1a1a2e] text-sm leading-relaxed">{mission.concept}</p>
             </div>
 
             <div className="flex gap-3">
               <button
                 onClick={handleGoToMap}
-                className="flex-1 border border-[#534AB7]/50 hover:border-[#534AB7] text-slate-300 hover:text-white font-semibold py-3 rounded-xl text-center transition text-sm"
+                className="flex-1 border border-[#E0E0F0] hover:border-[#534AB7]/40 hover:bg-[#EEF0FF] text-[#4a4a6a] hover:text-[#534AB7] font-semibold py-3 rounded-xl text-center transition text-sm"
               >
                 🗺️ Volver al mapa
               </button>
               {nextMission ? (
                 <Link
                   href={`/app/mision/${nextMission.id}`}
-                  className="flex-1 bg-[#00d4a1] hover:bg-[#00b88e] text-[#0d0d1a] font-bold py-3 rounded-xl text-center transition text-sm"
+                  className="flex-1 bg-[#00B894] hover:bg-[#009e7e] text-white font-bold py-3 rounded-xl text-center transition text-sm"
                 >
                   Siguiente ▶
                 </Link>
@@ -275,13 +268,13 @@ export function MissionScreen({ mission }: Props) {
 
       {/* ── Failure modal ───────────────────────────────────── */}
       {showFailure && executionResult && (
-        <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 px-4">
-          <div className="bg-[#12122a] border border-red-500/30 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 px-4">
+          <div className="bg-white border border-[#E0E0F0] rounded-2xl p-8 max-w-sm w-full text-center shadow-[0_8px_40px_rgba(83,74,183,0.2)]">
             <div className="text-5xl mb-3">😅</div>
-            <h2 className="text-2xl font-bold text-white mb-2">¡Casi lo tienes!</h2>
+            <h2 className="text-2xl font-bold text-[#1a1a2e] mb-2">¡Casi lo tienes!</h2>
 
-            <div className="bg-red-950/40 border border-red-500/20 rounded-xl p-4 mb-6">
-              <p className="text-red-300 text-sm leading-relaxed">{executionResult.message}</p>
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+              <p className="text-red-600 text-sm leading-relaxed">{executionResult.message}</p>
             </div>
 
             <div className="flex gap-3">
@@ -296,7 +289,7 @@ export function MissionScreen({ mission }: Props) {
               </button>
               <button
                 onClick={handleHint}
-                className="flex-1 bg-yellow-900/40 hover:bg-yellow-900/60 border border-yellow-600/50 text-yellow-300 font-semibold py-3 rounded-xl transition text-sm"
+                className="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 font-semibold py-3 rounded-xl transition text-sm"
               >
                 💡 Pedir pista
               </button>

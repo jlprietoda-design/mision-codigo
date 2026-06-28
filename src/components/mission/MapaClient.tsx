@@ -30,7 +30,7 @@ function HConnector({ between }: { between: [LevelData | null, LevelData | null]
     <div
       className={[
         'h-[3px] w-8 rounded-full self-center',
-        bothDone ? 'bg-[#FFD700]/70' : anyActive ? 'bg-[#534AB7]/70' : 'bg-slate-700',
+        bothDone ? 'bg-[#00B894]/60' : anyActive ? 'bg-[#534AB7]/40' : 'bg-[#E0E0F0]',
       ].join(' ')}
     />
   )
@@ -49,10 +49,10 @@ function VConnector({
   const anyActive =
     (above?.status ?? 'locked') !== 'locked' && (below?.status ?? 'locked') !== 'locked'
   const lineColor = bothDone
-    ? 'bg-[#FFD700]/70'
+    ? 'bg-[#00B894]/60'
     : anyActive
-      ? 'bg-[#534AB7]/60'
-      : 'bg-slate-700'
+      ? 'bg-[#534AB7]/40'
+      : 'bg-[#E0E0F0]'
 
   return (
     <div className="grid grid-cols-3 h-8 w-full">
@@ -108,14 +108,14 @@ export function MapaClient() {
   }
 
   return (
-    <div className="relative z-10 flex flex-col lg:flex-row h-screen bg-[#0d0d1a]/85 overflow-hidden">
+    <div className="relative z-10 flex flex-col lg:flex-row h-[calc(100vh-4rem)] bg-[#F8F9FF] overflow-hidden">
 
       {/* ── Left column: world map (60%) ─────────────────────── */}
       <div className="lg:w-3/5 w-full flex flex-col min-h-0 overflow-y-auto">
         {/* Header */}
         <div className="flex-shrink-0 px-4 pt-8 pb-6 text-center">
-          <h1 className="text-3xl font-bold text-white">Mapa de Mundos</h1>
-          <p className="text-slate-400 mt-1 text-sm">
+          <h1 className="text-3xl font-bold text-[#1a1a2e]">Mapa de Mundos</h1>
+          <p className="text-[#4a4a6a] mt-1 text-sm">
             Ahora en:{' '}
             <span className="text-[#534AB7] font-semibold">
               {inProgressLevel.emoji} {inProgressLevel.title}
@@ -181,7 +181,7 @@ export function MapaClient() {
         <div className="flex-shrink-0 pb-6 text-center">
           <Link
             href="/app/familia"
-            className="text-slate-500 hover:text-slate-300 text-sm transition-colors"
+            className="text-[#4a4a6a] hover:text-[#534AB7] text-sm transition-colors"
           >
             ← Cambiar aventurero
           </Link>
@@ -189,7 +189,7 @@ export function MapaClient() {
       </div>
 
       {/* ── Right column: mission panel (40%) ────────────────── */}
-      <div className="lg:w-2/5 w-full lg:h-full lg:border-t-0 border-t border-[#534AB7]/20 min-h-[320px] lg:min-h-0">
+      <div className="lg:w-2/5 w-full lg:h-full lg:border-t-0 border-t border-[#E0E0F0] min-h-[320px] lg:min-h-0">
         <MissionListPanel
           missions={missionsForLevel}
           progressMap={progressMap}

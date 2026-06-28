@@ -79,11 +79,30 @@ Decisiones importantes:
 
 ## Diseño visual
 
-- Color de fondo: `#0d0d1a` (negro/azul muy oscuro)
-- Color principal (púrpura): `#534AB7`
-- Color de acción (verde): `#00d4a1`
-- Estilo gamificado — parece un videojuego, no una academia.
-- Textos grandes y claros, pensados para niños.
+Tema: CLARO (no oscuro). La app usa fondo claro con acentos púrpura y verde.
+
+Colores principales:
+- Fondo principal: `#F8F9FF`
+- Fondo cards: `#FFFFFF`
+- Fondo secundario (secciones alternas): `#EEF0FF`
+- Color principal púrpura: `#534AB7`
+- Color acción verde: `#00B894`
+- Texto principal: `#1a1a2e`
+- Texto secundario: `#4a4a6a`
+- Bordes: `#E0E0F0`
+- Sombras cards: `box-shadow: 0 2px 12px rgba(83,74,183,0.08)`
+
+Excepción: el hero de la landing page (`/`) mantiene fondo oscuro `#0d0d1a` con estrellas animadas para impacto visual. El resto de la landing y toda la plataforma privada son claras.
+
+Componentes de misión:
+- Bloques `move_forward`: fondo verde claro (`#E8F8F5`), texto verde oscuro (`#007a5e`)
+- Bloques `turn_left`/`turn_right`: fondo azul claro (`blue-50`), texto azul oscuro (`blue-700`)
+- Bloques `repeat`: fondo púrpura claro (`#EEF0FF`), texto púrpura oscuro (`#534AB7`)
+- Grid de juego: fondo `#EEF0FF`, celdas `#D8DAFF` con borde
+- Panel izquierdo y derecho de misión: fondo blanco
+
+Navbar de plataforma (`AppNavbar`): fondo blanco, borde `#E0E0F0`, links activos en `#534AB7`.
+Navbar de landing (`LandingNavbar`): transparente sobre hero oscuro, blanco con borde al hacer scroll.
 
 ## Seguridad infantil (respetar siempre, sin excepciones)
 
@@ -107,12 +126,20 @@ Robot mentor amable que acompaña al niño durante las misiones. En MVP usa pist
 
 ## Estado actual del proyecto
 
-| Área                  | Estado        |
-|-----------------------|---------------|
-| Infraestructura       | ✅ Completada  |
-| Base de datos         | ✅ Completada  |
-| Autenticación         | 🔲 Pendiente  |
-| Panel familiar        | 🔲 Pendiente  |
-| Motor de misiones     | 🔲 Pendiente  |
-| Editor Blockly        | 🔲 Pendiente  |
-| Personaje Codi        | 🔲 Pendiente  |
+| Área                                              | Estado           |
+|---------------------------------------------------|------------------|
+| Infraestructura                                   | ✅ Completada     |
+| Base de datos                                     | ✅ Schema + seeds ejecutados |
+| Autenticación                                     | ✅ Login y registro de adulto |
+| Panel familiar                                    | ✅ Perfiles infantiles con CRUD |
+| Panel del niño                                    | ✅ Avatar, saludo, accesos |
+| Mapa de mundos                                    | ✅ Con panel lateral de misiones y progreso |
+| Motor de misiones                                 | ✅ 5 misiones Nivel 0 jugables |
+| Sistema de progreso e insignias                   | ✅ Completado     |
+| Landing page pública                              | ✅ Completada     |
+| Tema visual claro                                 | ✅ Completado     |
+| Cierre de sesión                                  | ✅ Completado     |
+| Internacionalización (i18n)                       | 🔲 Pendiente     |
+| Asistente Codi                                    | 🔲 Pendiente     |
+| Misiones Nivel 1                                  | 🔲 Pendiente     |
+| Páginas secundarias (/familias, /seguridad, etc.) | 🔲 Pendiente     |

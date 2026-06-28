@@ -22,7 +22,6 @@ export default async function FamiliaPage() {
   const profiles = childProfiles ?? []
   const adultName = profileRow?.name ?? 'aventurero'
 
-  // Fetch level titles for any non-zero levels present
   const levelIds = [...new Set(profiles.map((p) => p.current_level_id).filter((id) => id > 0))]
   let levelMap: Record<number, string> = {}
   if (levelIds.length > 0) {
@@ -35,7 +34,6 @@ export default async function FamiliaPage() {
     }
   }
 
-  // Fetch completed mission counts grouped by child profile
   let missionCounts: Record<string, number> = {}
   if (profiles.length > 0) {
     const { data: progress } = await supabase
@@ -55,15 +53,15 @@ export default async function FamiliaPage() {
 
   if (profiles.length === 0) {
     return (
-      <div className="min-h-screen bg-[#0d0d1a] flex flex-col items-center justify-center px-4 text-center">
+      <div className="min-h-[calc(100vh-4rem)] bg-[#F8F9FF] flex flex-col items-center justify-center px-4 text-center">
         <div className="text-8xl mb-6">🤖</div>
-        <h1 className="text-4xl font-bold text-white mb-3">¡Hola, {adultName}!</h1>
-        <p className="text-slate-400 text-lg mb-8 max-w-md">
+        <h1 className="text-4xl font-bold text-[#1a1a2e] mb-3">¡Hola, {adultName}!</h1>
+        <p className="text-[#4a4a6a] text-lg mb-8 max-w-md">
           Aún no tienes aventureros. Crea el primer perfil para que tu hijo empiece su misión.
         </p>
         <Link
           href="/app/familia/nuevo-perfil"
-          className="bg-[#00d4a1] hover:bg-[#00b88e] text-[#0d0d1a] font-bold px-8 py-4 rounded-xl text-lg transition"
+          className="bg-[#00B894] hover:bg-[#009e7e] text-white font-bold px-8 py-4 rounded-xl text-lg transition shadow-[0_2px_16px_rgba(0,184,148,0.3)]"
         >
           Crear primer perfil
         </Link>
@@ -72,16 +70,16 @@ export default async function FamiliaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0d0d1a] px-4 py-10">
+    <div className="min-h-[calc(100vh-4rem)] bg-[#F8F9FF] px-4 py-10">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-start justify-between mb-10">
           <div>
-            <h1 className="text-4xl font-bold text-white">Mis aventureros</h1>
-            <p className="text-slate-400 mt-1">Panel de {adultName}</p>
+            <h1 className="text-4xl font-bold text-[#1a1a2e]">Mis aventureros</h1>
+            <p className="text-[#4a4a6a] mt-1">Panel de {adultName}</p>
           </div>
           <Link
             href="/app/familia/nuevo-perfil"
-            className="bg-[#534AB7] hover:bg-[#4338ca] text-white font-semibold px-5 py-2.5 rounded-xl transition text-sm whitespace-nowrap"
+            className="bg-[#534AB7] hover:bg-[#4338ca] text-white font-semibold px-5 py-2.5 rounded-xl transition text-sm whitespace-nowrap shadow-[0_2px_12px_rgba(83,74,183,0.2)]"
           >
             + Añadir perfil
           </Link>

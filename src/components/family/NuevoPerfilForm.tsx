@@ -13,7 +13,6 @@ const AGE_RANGES = [
   { value: '12-14', label: '12-14 años', emoji: '🏆' },
 ]
 
-// Only letters (including Spanish), numbers, and hyphens
 const ALIAS_ALLOWED = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\-]*$/
 
 export function NuevoPerfilForm() {
@@ -57,22 +56,24 @@ export function NuevoPerfilForm() {
   return (
     <div className="w-full max-w-lg">
       <div className="text-center mb-8">
-        <div className="text-6xl mb-3 transition-all duration-200">{selectedAvatar}</div>
-        <h1 className="text-3xl font-bold text-white">Nuevo aventurero</h1>
-        <p className="text-slate-400 mt-2">Crea un perfil para tu hijo</p>
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#EEF0FF] mb-3 text-5xl transition-all duration-200">
+          {selectedAvatar}
+        </div>
+        <h1 className="text-3xl font-bold text-[#1a1a2e]">Nuevo aventurero</h1>
+        <p className="text-[#4a4a6a] mt-2">Crea un perfil para tu hijo</p>
       </div>
 
-      <div className="bg-[#12122a] border border-[#534AB7]/30 rounded-2xl p-8 shadow-2xl">
+      <div className="bg-white border border-[#E0E0F0] rounded-2xl p-8 shadow-[0_2px_20px_rgba(83,74,183,0.08)]">
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
 
           {/* Alias */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label htmlFor="alias" className="text-sm text-slate-300">
+              <label htmlFor="alias" className="text-sm text-[#4a4a6a] font-medium">
                 Nombre de aventurero
               </label>
               <span
-                className={`text-xs tabular-nums ${alias.length >= 18 ? 'text-amber-400' : 'text-slate-500'}`}
+                className={`text-xs tabular-nums ${alias.length >= 18 ? 'text-amber-500' : 'text-[#4a4a6a]/50'}`}
               >
                 {alias.length}/20
               </span>
@@ -85,14 +86,14 @@ export function NuevoPerfilForm() {
               placeholder="CodiHero"
               autoComplete="off"
               autoCapitalize="none"
-              className="w-full bg-[#0d0d1a] border border-[#534AB7]/40 text-white placeholder-slate-600 rounded-lg px-4 py-3 focus:outline-none focus:border-[#534AB7] focus:ring-1 focus:ring-[#534AB7] transition"
+              className="w-full bg-white border border-[#E0E0F0] text-[#1a1a2e] placeholder-[#4a4a6a]/40 rounded-lg px-4 py-3 focus:outline-none focus:border-[#534AB7] focus:ring-2 focus:ring-[#534AB7]/20 transition"
             />
-            <p className="text-xs text-slate-500 mt-1">Solo letras, números y guiones</p>
+            <p className="text-xs text-[#4a4a6a]/60 mt-1">Solo letras, números y guiones</p>
           </div>
 
           {/* Age range */}
           <div>
-            <p className="text-sm text-slate-300 mb-2">Edad</p>
+            <p className="text-sm text-[#4a4a6a] font-medium mb-2">Edad</p>
             <div className="grid grid-cols-2 gap-3">
               {AGE_RANGES.map(({ value, label, emoji }) => (
                 <button
@@ -101,8 +102,8 @@ export function NuevoPerfilForm() {
                   onClick={() => setSelectedAge(value)}
                   className={`border rounded-xl p-3 text-center transition ${
                     selectedAge === value
-                      ? 'border-[#534AB7] bg-[#534AB7]/15 text-white'
-                      : 'border-[#534AB7]/30 text-slate-400 hover:border-[#534AB7]/60 hover:text-slate-300'
+                      ? 'border-[#534AB7] bg-[#EEF0FF] text-[#1a1a2e]'
+                      : 'border-[#E0E0F0] text-[#4a4a6a] hover:border-[#534AB7]/40'
                   }`}
                 >
                   <div className="text-2xl mb-1">{emoji}</div>
@@ -114,7 +115,7 @@ export function NuevoPerfilForm() {
 
           {/* Avatar picker */}
           <div>
-            <p className="text-sm text-slate-300 mb-2">Avatar</p>
+            <p className="text-sm text-[#4a4a6a] font-medium mb-2">Avatar</p>
             <div className="grid grid-cols-8 gap-1.5">
               {AVATARS.map((emoji) => (
                 <button
@@ -125,8 +126,8 @@ export function NuevoPerfilForm() {
                   aria-pressed={selectedAvatar === emoji}
                   className={`text-2xl p-2 rounded-lg transition ${
                     selectedAvatar === emoji
-                      ? 'bg-[#534AB7]/30 ring-2 ring-[#534AB7]'
-                      : 'hover:bg-[#534AB7]/10'
+                      ? 'bg-[#EEF0FF] ring-2 ring-[#534AB7]'
+                      : 'hover:bg-[#F8F9FF]'
                   }`}
                 >
                   {emoji}
@@ -136,26 +137,26 @@ export function NuevoPerfilForm() {
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3">
-              <p className="text-red-400 text-sm">{error}</p>
+            <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+              <p className="text-red-600 text-sm">{error}</p>
             </div>
           )}
 
           <div className="flex gap-3">
             <Link
               href="/app/familia"
-              className="flex-1 border border-[#534AB7]/50 hover:border-[#534AB7] text-slate-300 hover:text-white font-semibold py-3 rounded-xl text-center transition text-sm"
+              className="flex-1 border border-[#E0E0F0] hover:border-[#534AB7]/40 text-[#4a4a6a] hover:text-[#534AB7] font-semibold py-3 rounded-xl text-center transition text-sm"
             >
               Cancelar
             </Link>
             <button
               type="submit"
               disabled={isPending}
-              className="flex-1 bg-[#00d4a1] hover:bg-[#00b88e] disabled:opacity-50 disabled:cursor-not-allowed text-[#0d0d1a] font-bold py-3 rounded-xl transition text-sm"
+              className="flex-1 bg-[#00B894] hover:bg-[#009e7e] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition text-sm"
             >
               {isPending ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="w-4 h-4 border-2 border-[#0d0d1a]/30 border-t-[#0d0d1a] rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Creando...
                 </span>
               ) : (

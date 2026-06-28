@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { LEVELS } from '@/lib/data/levels'
-import { StarryBackground } from '@/components/ui/StarryBackground'
 import { SetActiveProfile } from '@/components/mission/SetActiveProfile'
 
 interface Props {
@@ -39,8 +38,6 @@ export default async function PerfilPage({ params }: Props) {
 
   return (
     <>
-      <StarryBackground />
-
       {/* Invisible client bridge: writes profile data into the Zustand store */}
       <SetActiveProfile
         id={profile.id}
@@ -49,21 +46,24 @@ export default async function PerfilPage({ params }: Props) {
         currentLevelId={profile.current_level_id}
       />
 
-      <div className="relative z-10 min-h-screen bg-[#0d0d1a]/80 flex flex-col items-center justify-center px-4 py-12 text-center">
-        {/* Animated avatar */}
-        <div style={{ animation: 'float 3s ease-in-out infinite' }}>
-          <div className="text-[96px] leading-none select-none">{profile.avatar}</div>
+      <div className="min-h-[calc(100vh-4rem)] bg-[#F8F9FF] flex flex-col items-center justify-center px-4 py-12 text-center">
+        {/* Avatar */}
+        <div
+          className="inline-flex items-center justify-center w-32 h-32 rounded-full bg-[#EEF0FF] shadow-[0_4px_20px_rgba(83,74,183,0.15)]"
+          style={{ animation: 'float 3s ease-in-out infinite' }}
+        >
+          <span className="text-6xl leading-none select-none">{profile.avatar}</span>
         </div>
 
         {/* Greeting */}
-        <h1 className="mt-6 text-4xl sm:text-5xl font-bold text-white">
-          ¡Hola, <span className="text-[#00d4a1]">{profile.alias}</span>!
+        <h1 className="mt-6 text-4xl sm:text-5xl font-bold text-[#1a1a2e]">
+          ¡Hola, <span className="text-[#534AB7]">{profile.alias}</span>!
         </h1>
 
         {/* Current world badge */}
-        <div className="mt-3 inline-flex items-center gap-2 bg-[#1a1a2e] border border-[#534AB7]/50 rounded-full px-5 py-2">
+        <div className="mt-3 inline-flex items-center gap-2 bg-white border border-[#E0E0F0] rounded-full px-5 py-2 shadow-[0_2px_8px_rgba(83,74,183,0.08)]">
           <span className="text-xl">{currentLevel.emoji}</span>
-          <span className="text-slate-300 text-sm font-medium">
+          <span className="text-[#4a4a6a] text-sm font-medium">
             Mundo {currentLevel.id} — {currentLevel.title}
           </span>
         </div>
@@ -71,7 +71,7 @@ export default async function PerfilPage({ params }: Props) {
         {/* Primary CTA */}
         <Link
           href="/app/mapa"
-          className="mt-8 inline-flex items-center gap-3 bg-[#00d4a1] hover:bg-[#00b88e] text-[#0d0d1a] font-bold text-lg px-10 py-4 rounded-2xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(0,212,161,0.4)]"
+          className="mt-8 inline-flex items-center gap-3 bg-[#00B894] hover:bg-[#009e7e] text-white font-bold text-lg px-10 py-4 rounded-2xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-[0_4px_20px_rgba(0,184,148,0.3)]"
         >
           <span>⚡</span>
           ¡Continuar misión!
@@ -84,19 +84,19 @@ export default async function PerfilPage({ params }: Props) {
               <Link
                 key={label}
                 href={href}
-                className="flex flex-col items-center gap-2 bg-[#1a1a2e] hover:bg-[#252540] border border-[#534AB7]/40 hover:border-[#534AB7] rounded-xl p-4 transition-all duration-200 group"
+                className="flex flex-col items-center gap-2 bg-white hover:bg-[#EEF0FF] border border-[#E0E0F0] hover:border-[#534AB7]/40 rounded-xl p-4 transition-all duration-200 group shadow-[0_2px_8px_rgba(83,74,183,0.06)]"
               >
                 <span className="text-3xl group-hover:scale-110 transition-transform">{icon}</span>
-                <span className="text-slate-300 text-xs leading-tight text-center">{label}</span>
+                <span className="text-[#4a4a6a] text-xs leading-tight text-center">{label}</span>
               </Link>
             ) : (
               <div
                 key={label}
-                className="flex flex-col items-center gap-2 bg-[#1a1a2e]/60 border border-[#534AB7]/20 rounded-xl p-4 opacity-50 select-none"
+                className="flex flex-col items-center gap-2 bg-[#F8F9FF] border border-[#E0E0F0] rounded-xl p-4 opacity-50 select-none"
               >
                 <span className="text-3xl">{icon}</span>
-                <span className="text-slate-500 text-xs leading-tight text-center">{label}</span>
-                <span className="text-[9px] text-slate-600 leading-none">próximamente</span>
+                <span className="text-[#4a4a6a] text-xs leading-tight text-center">{label}</span>
+                <span className="text-[9px] text-[#4a4a6a]/50 leading-none">próximamente</span>
               </div>
             )
           )}
@@ -105,7 +105,7 @@ export default async function PerfilPage({ params }: Props) {
         {/* Back link */}
         <Link
           href="/app/familia"
-          className="mt-8 text-slate-500 hover:text-slate-300 text-sm transition-colors"
+          className="mt-8 text-[#4a4a6a] hover:text-[#534AB7] text-sm transition-colors"
         >
           ← Cambiar aventurero
         </Link>

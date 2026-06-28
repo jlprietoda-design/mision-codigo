@@ -11,20 +11,20 @@ interface Props {
 
 const STATUS_STYLES: Record<LevelStatus, string> = {
   completed:
-    'bg-[#FFD700] border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.5)] cursor-pointer hover:shadow-[0_0_30px_rgba(255,215,0,0.8)] hover:scale-105',
+    'bg-[#E8F8F5] border-[#00B894] cursor-pointer hover:shadow-[0_4px_16px_rgba(0,184,148,0.3)] hover:scale-105',
   in_progress:
-    'bg-[#534AB7] border-[#534AB7] cursor-pointer hover:scale-105',
+    'bg-[#EEF0FF] border-[#534AB7] cursor-pointer hover:scale-105',
   available:
-    'bg-[#1a1a2e] border-[#00d4a1] shadow-[0_0_12px_rgba(0,212,161,0.3)] cursor-pointer hover:shadow-[0_0_24px_rgba(0,212,161,0.6)] hover:scale-105',
+    'bg-white border-[#534AB7] shadow-[0_2px_12px_rgba(83,74,183,0.15)] cursor-pointer hover:shadow-[0_4px_20px_rgba(83,74,183,0.25)] hover:scale-105',
   locked:
-    'bg-[#2a2a3a] border-[#3a3a4a] opacity-50 cursor-not-allowed',
+    'bg-[#F0F0F5] border-[#D0D0E0] opacity-60 cursor-not-allowed',
 }
 
 const TITLE_COLOR: Record<LevelStatus, string> = {
-  completed: 'text-[#1a1200] font-bold',
-  in_progress: 'text-white font-bold',
-  available: 'text-[#00d4a1] font-semibold',
-  locked: 'text-slate-500',
+  completed: 'text-[#007a5e] font-bold',
+  in_progress: 'text-[#534AB7] font-bold',
+  available: 'text-[#534AB7] font-semibold',
+  locked: 'text-[#4a4a6a]/50',
 }
 
 export function WorldNode({ level, status, onSelect, isSelected }: Props) {
@@ -51,15 +51,13 @@ export function WorldNode({ level, status, onSelect, isSelected }: Props) {
           'w-[72px] h-[72px] rounded-full border-2 flex flex-col items-center justify-center transition-all duration-300 relative select-none',
           STATUS_STYLES[status],
           status === 'in_progress' ? 'animate-[pulse-glow_2s_ease-in-out_infinite]' : '',
-          isSelected ? 'ring-2 ring-white/80 ring-offset-2 ring-offset-[#0d0d1a]' : '',
+          isSelected ? 'ring-2 ring-[#534AB7] ring-offset-2 ring-offset-[#F8F9FF]' : '',
         ].join(' ')}
       >
         {status === 'completed' ? (
           <>
-            <span className="text-2xl leading-none">✓</span>
-            <span className="text-[10px] font-bold text-[#1a1200] leading-none mt-0.5">
-              {level.emoji}
-            </span>
+            <span className="text-2xl leading-none text-[#00B894]">✓</span>
+            <span className="text-[10px] leading-none mt-0.5">{level.emoji}</span>
           </>
         ) : status === 'locked' ? (
           <span className="text-2xl leading-none">🔒</span>
@@ -71,12 +69,12 @@ export function WorldNode({ level, status, onSelect, isSelected }: Props) {
       <div className="text-center max-w-[88px]">
         <p className={`text-[10px] leading-tight ${TITLE_COLOR[status]}`}>{level.title}</p>
         {status === 'in_progress' && (
-          <span className="inline-block mt-0.5 text-[9px] bg-[#534AB7]/30 text-[#a59cf0] rounded-full px-1.5 py-0.5 leading-none">
+          <span className="inline-block mt-0.5 text-[9px] bg-[#EEF0FF] text-[#534AB7] border border-[#534AB7]/30 rounded-full px-1.5 py-0.5 leading-none">
             activo
           </span>
         )}
         {isSelected && status !== 'in_progress' && (
-          <span className="inline-block mt-0.5 text-[9px] bg-white/10 text-white/70 rounded-full px-1.5 py-0.5 leading-none">
+          <span className="inline-block mt-0.5 text-[9px] bg-[#EEF0FF] text-[#534AB7] rounded-full px-1.5 py-0.5 leading-none">
             seleccionado
           </span>
         )}
