@@ -2,10 +2,13 @@
 
 import { useRef, useState, useMemo } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { executeMission } from '@/lib/mission-engine/executor'
 import type { Block, ExecutionResult } from '@/lib/mission-engine/types'
 import type { MissionData } from '@/lib/data/missions'
 import { getNextMission } from '@/lib/data/missions'
+import { useProfileStore } from '@/stores/profileStore'
+import { saveMissionProgress, awardBadge } from '@/app/actions/progress'
 import { MissionGrid } from './MissionGrid'
 import { BlockPalette } from './BlockPalette'
 
@@ -30,8 +33,18 @@ export function MissionScreen({ mission }: Props) {
 
   const cancelRef = useRef(false)
   const mountedRef = useRef(true)
+  const attemptsRef = useRef(0)
+  const hintsUsedRef = useRef(0)
 
+  const router = useRouter()
+  const activeProfile = useProfileStore((s) => s.activeProfile)
+  const setSelectedLevelId = useProfileStore((s) => s.setSelectedLevelId)
   const nextMission = getNextMission(mission.id)
+
+  function handleGoToMap() {
+    setSelectedLevelId(mission.levelId)
+    router.push('/app/mapa')
+  }
 
   // Current execution step (null = initial state, no execution yet)
   const currentStep = executionResult ? executionResult.steps[currentStepIdx] ?? null : null
@@ -64,12 +77,16 @@ export function MissionScreen({ mission }: Props) {
   }
 
   function handleHint() {
+    if (hintIdx < mission.hints.length - 1) {
+      hintsUsedRef.current += 1
+    }
     setHintIdx((prev) => Math.min(prev + 1, mission.hints.length - 1))
     setShowFailure(false)
   }
 
   async function handleExecute() {
     if (isAnimating || programBlocks.length === 0) return
+    attemptsRef.current += 1
     cancelRef.current = false
     setShowSuccess(false)
     setShowFailure(false)
@@ -90,8 +107,32 @@ export function MissionScreen({ mission }: Props) {
 
     if (result.success) {
       setShowSuccess(true)
+      if (activeProfile?.id) {
+        void saveMissionProgress(
+          activeProfile.id,
+          mission.id,
+          'completed',
+          attemptsRef.current,
+          hintsUsedRef.current
+        )
+        if (mission.id === 'primeros-pasos-01') {
+          void awardBadge(activeProfile.id, 'primera-instruccion')
+        }
+        if (mission.id === 'primeros-pasos-05') {
+          void awardBadge(activeProfile.id, 'explorador-logico')
+        }
+      }
     } else {
       setShowFailure(true)
+      if (activeProfile?.id) {
+        void saveMissionProgress(
+          activeProfile.id,
+          mission.id,
+          'started',
+          attemptsRef.current,
+          hintsUsedRef.current
+        )
+      }
     }
   }
 
@@ -104,12 +145,12 @@ export function MissionScreen({ mission }: Props) {
 
       {/* ── Top bar ─────────────────────────────────────────── */}
       <header className="flex-shrink-0 flex items-center justify-between px-4 py-2.5 bg-[#0d0d1a] border-b border-[#534AB7]/25">
-        <Link
-          href="/app/mapa"
+        <button
+          onClick={handleGoToMap}
           className="flex items-center gap-1.5 text-slate-400 hover:text-white transition text-sm"
         >
           ← Mapa
-        </Link>
+        </button>
         <div className="text-center">
           <h1 className="text-white font-bold text-sm leading-tight">{mission.title}</h1>
           <p className="text-slate-600 text-[11px]">Nivel {mission.levelId} · Misión {mission.order}</p>
@@ -206,12 +247,12 @@ export function MissionScreen({ mission }: Props) {
             </div>
 
             <div className="flex gap-3">
-              <Link
-                href="/app/mapa"
+              <button
+                onClick={handleGoToMap}
                 className="flex-1 border border-[#534AB7]/50 hover:border-[#534AB7] text-slate-300 hover:text-white font-semibold py-3 rounded-xl text-center transition text-sm"
               >
                 🗺️ Volver al mapa
-              </Link>
+              </button>
               {nextMission ? (
                 <Link
                   href={`/app/mision/${nextMission.id}`}
@@ -220,12 +261,12 @@ export function MissionScreen({ mission }: Props) {
                   Siguiente ▶
                 </Link>
               ) : (
-                <Link
-                  href="/app/mapa"
+                <button
+                  onClick={handleGoToMap}
                   className="flex-1 bg-[#534AB7] hover:bg-[#4338ca] text-white font-bold py-3 rounded-xl text-center transition text-sm"
                 >
                   🏆 ¡Nivel completado!
-                </Link>
+                </button>
               )}
             </div>
           </div>

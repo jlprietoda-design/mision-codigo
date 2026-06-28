@@ -114,14 +114,19 @@ export function BlockPalette({
       </div>
 
       {/* ── Program ──────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto p-3 border-b border-[#534AB7]/20">
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-1">
+      <div className="flex-shrink-0 px-4 pt-2.5 pb-1.5 border-b border-[#534AB7]/10">
+        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
           Mi programa{' '}
           <span className="text-slate-600 font-normal normal-case">
             ({programBlocks.length}/{MAX_PROGRAM})
           </span>
         </p>
-
+      </div>
+      {/* min-h-0 is required so overflow-y-scroll respects the flex container height */}
+      <div
+        className="flex-1 min-h-0 overflow-y-scroll scrollbar-purple p-3 border-b border-[#534AB7]/20"
+        style={{ scrollbarGutter: 'stable' }}
+      >
         {programBlocks.length === 0 ? (
           <div className="text-center py-6">
             <p className="text-3xl mb-2">👆</p>

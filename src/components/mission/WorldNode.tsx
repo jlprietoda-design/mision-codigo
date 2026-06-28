@@ -1,11 +1,12 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import type { LevelData, LevelStatus } from '@/lib/data/levels'
 
 interface Props {
   level: LevelData
   status: LevelStatus
+  onSelect?: (levelId: number) => void
+  isSelected?: boolean
 }
 
 const STATUS_STYLES: Record<LevelStatus, string> = {
@@ -26,15 +27,10 @@ const TITLE_COLOR: Record<LevelStatus, string> = {
   locked: 'text-slate-500',
 }
 
-export function WorldNode({ level, status }: Props) {
-  const router = useRouter()
-
+export function WorldNode({ level, status, onSelect, isSelected }: Props) {
   function handleClick() {
     if (status === 'locked') return
-    const href = level.firstMissionSlug
-      ? `/app/mision/${level.firstMissionSlug}`
-      : `/app/mision/${level.slug}`
-    router.push(href)
+    onSelect?.(level.id)
   }
 
   return (
@@ -42,11 +38,20 @@ export function WorldNode({ level, status }: Props) {
       <button
         onClick={handleClick}
         disabled={status === 'locked'}
-        aria-label={`${level.title} — ${status === 'locked' ? 'bloqueado' : status === 'completed' ? 'completado' : status === 'in_progress' ? 'en progreso' : 'disponible'}`}
+        aria-label={`${level.title} — ${
+          status === 'locked'
+            ? 'bloqueado'
+            : status === 'completed'
+              ? 'completado'
+              : status === 'in_progress'
+                ? 'en progreso'
+                : 'disponible'
+        }`}
         className={[
           'w-[72px] h-[72px] rounded-full border-2 flex flex-col items-center justify-center transition-all duration-300 relative select-none',
           STATUS_STYLES[status],
           status === 'in_progress' ? 'animate-[pulse-glow_2s_ease-in-out_infinite]' : '',
+          isSelected ? 'ring-2 ring-white/80 ring-offset-2 ring-offset-[#0d0d1a]' : '',
         ].join(' ')}
       >
         {status === 'completed' ? (
@@ -68,6 +73,11 @@ export function WorldNode({ level, status }: Props) {
         {status === 'in_progress' && (
           <span className="inline-block mt-0.5 text-[9px] bg-[#534AB7]/30 text-[#a59cf0] rounded-full px-1.5 py-0.5 leading-none">
             activo
+          </span>
+        )}
+        {isSelected && status !== 'in_progress' && (
+          <span className="inline-block mt-0.5 text-[9px] bg-white/10 text-white/70 rounded-full px-1.5 py-0.5 leading-none">
+            seleccionado
           </span>
         )}
       </div>

@@ -12,6 +12,8 @@ interface ProfileState {
   activeProfile: ActiveProfile | null
   setActiveProfile: (profile: ActiveProfile) => void
   clearActiveProfile: () => void
+  selectedLevelId: number | null
+  setSelectedLevelId: (id: number) => void
 }
 
 export const useProfileStore = create<ProfileState>()(
@@ -20,6 +22,8 @@ export const useProfileStore = create<ProfileState>()(
       activeProfile: null,
       setActiveProfile: (profile) => set({ activeProfile: profile }),
       clearActiveProfile: () => set({ activeProfile: null }),
+      selectedLevelId: null,
+      setSelectedLevelId: (id) => set({ selectedLevelId: id }),
     }),
     { name: 'mision-codigo-active-profile' }
   )

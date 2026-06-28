@@ -33,7 +33,7 @@ export default async function PerfilPage({ params }: Props) {
 
   const secondaryLinks = [
     { href: '/app/mapa', icon: '🗺️', label: 'Mapa de mundos', active: true },
-    { href: '#', icon: '🏅', label: 'Mis insignias', active: false },
+    { href: `/app/progreso/${profile.id}`, icon: '🏅', label: 'Mi progreso', active: true },
     { href: '#', icon: '🎮', label: 'Mis proyectos', active: false },
   ]
 

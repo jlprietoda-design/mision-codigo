@@ -46,6 +46,26 @@ body {
   }
 }
 
+.scrollbar-purple {
+  scrollbar-width: thin;
+  scrollbar-color: #534AB7 transparent;
+  overflow-y: scroll !important;
+}
+
+.scrollbar-purple::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-purple::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-purple::-webkit-scrollbar-thumb {
+  background-color: #534AB7;
+  border-radius: 3px;
+  min-height: 40px;
+}
+
 @keyframes pulse-glow {
   0%,
   100% {
