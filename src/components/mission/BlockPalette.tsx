@@ -1,9 +1,10 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import type { Block } from '@/lib/mission-engine/types'
 
 interface BlockMeta {
-  label: string
+  labelKey: string
   icon: string
   bg: string
   border: string
@@ -12,42 +13,42 @@ interface BlockMeta {
 
 const BLOCK_CATALOG: Record<string, BlockMeta> = {
   move_forward: {
-    label: 'Avanzar',
+    labelKey: 'moveForward',
     icon: '⬆️',
     bg: 'bg-[#E8F8F5] hover:bg-[#d0f0e8] active:bg-[#c0e8dc]',
     border: 'border-[#00B894]/40',
     text: 'text-[#007a5e]',
   },
   turn_left: {
-    label: 'Girar ←',
+    labelKey: 'turnLeft',
     icon: '↩️',
     bg: 'bg-blue-50 hover:bg-blue-100 active:bg-blue-200',
     border: 'border-blue-200',
     text: 'text-blue-700',
   },
   turn_right: {
-    label: 'Girar →',
+    labelKey: 'turnRight',
     icon: '↪️',
     bg: 'bg-blue-50 hover:bg-blue-100 active:bg-blue-200',
     border: 'border-blue-200',
     text: 'text-blue-700',
   },
   pick_item: {
-    label: 'Recoger',
+    labelKey: 'pickItem',
     icon: '✋',
     bg: 'bg-amber-50 hover:bg-amber-100 active:bg-amber-200',
     border: 'border-amber-200',
     text: 'text-amber-700',
   },
   use_item: {
-    label: 'Usar objeto',
+    labelKey: 'useItem',
     icon: '⚡',
     bg: 'bg-orange-50 hover:bg-orange-100 active:bg-orange-200',
     border: 'border-orange-200',
     text: 'text-orange-700',
   },
   repeat: {
-    label: 'Repetir',
+    labelKey: 'repeat',
     icon: '🔄',
     bg: 'bg-[#EEF0FF] hover:bg-[#e0e3ff] active:bg-[#d0d5ff]',
     border: 'border-[#534AB7]/30',
@@ -78,6 +79,7 @@ export function BlockPalette({
   onHint,
   isAnimating,
 }: Props) {
+  const t = useTranslations('mision')
   const canExecute = programBlocks.length > 0 && !isAnimating
   const programFull = programBlocks.length >= MAX_PROGRAM
 
@@ -87,7 +89,7 @@ export function BlockPalette({
       {/* ── Available blocks ─────────────────────────────────── */}
       <div className="flex-shrink-0 p-3 border-b border-[#E0E0F0]">
         <p className="text-xs font-semibold text-[#4a4a6a]/60 uppercase tracking-wider mb-2 px-1">
-          Bloques disponibles
+          {t('availableBlocks')}
         </p>
         <div className="flex flex-col gap-1.5">
           {availableBlocks.map((type) => {
@@ -108,15 +110,15 @@ export function BlockPalette({
                 ].join(' ')}
               >
                 <span className="text-base">{meta.icon}</span>
-                <span>{meta.label}</span>
-                <span className="ml-auto opacity-40 text-xs">+ añadir</span>
+                <span>{t(meta.labelKey as Parameters<typeof t>[0])}</span>
+                <span className="ml-auto opacity-40 text-xs">{t('addBlock')}</span>
               </button>
             )
           })}
         </div>
         {programFull && (
           <p className="text-xs text-amber-600 mt-2 text-center">
-            Máximo {MAX_PROGRAM} bloques. Elimina alguno.
+            {t('maxBlocks', { max: MAX_PROGRAM })}
           </p>
         )}
       </div>
@@ -124,7 +126,7 @@ export function BlockPalette({
       {/* ── Program title (fixed outside scroll) ─────────────── */}
       <div className="flex-shrink-0 px-4 pt-2.5 pb-1.5 border-b border-[#E0E0F0] bg-[#F8F9FF]">
         <p className="text-xs font-semibold text-[#4a4a6a]/60 uppercase tracking-wider">
-          Mi programa{' '}
+          {t('myProgram')}{' '}
           <span className="text-[#4a4a6a]/40 font-normal normal-case">
             ({programBlocks.length}/{MAX_PROGRAM})
           </span>
@@ -139,7 +141,7 @@ export function BlockPalette({
           <div className="text-center py-6">
             <p className="text-3xl mb-2">👆</p>
             <p className="text-[#4a4a6a]/50 text-xs leading-relaxed">
-              Haz clic en los bloques de arriba para añadirlos al programa.
+              {t('emptyProgram')}
             </p>
           </div>
         ) : (
@@ -161,7 +163,9 @@ export function BlockPalette({
                     {idx + 1}
                   </span>
                   <span className="text-base">{meta.icon}</span>
-                  <span className="flex-1 text-sm font-medium">{meta.label}</span>
+                  <span className="flex-1 text-sm font-medium">
+                    {t(meta.labelKey as Parameters<typeof t>[0])}
+                  </span>
                   <button
                     onClick={() => !isAnimating && onRemoveBlock(idx)}
                     disabled={isAnimating}
@@ -187,10 +191,10 @@ export function BlockPalette({
           {isAnimating ? (
             <>
               <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Ejecutando...
+              {t('executing')}
             </>
           ) : (
-            <>▶ Ejecutar</>
+            <>{t('execute')}</>
           )}
         </button>
 
@@ -200,14 +204,14 @@ export function BlockPalette({
             disabled={isAnimating}
             className="border border-[#E0E0F0] hover:border-[#534AB7]/40 hover:bg-[#EEF0FF] disabled:opacity-40 disabled:cursor-not-allowed text-[#4a4a6a] hover:text-[#534AB7] font-semibold py-2.5 rounded-xl transition text-xs"
           >
-            ↺ Reiniciar
+            {t('reset')}
           </button>
           <button
             onClick={onHint}
             disabled={isAnimating}
             className="border border-amber-200 hover:border-amber-400 hover:bg-amber-50 disabled:opacity-40 disabled:cursor-not-allowed text-amber-600 hover:text-amber-700 font-semibold py-2.5 rounded-xl transition text-xs"
           >
-            💡 Pista
+            {t('hintBtn')}
           </button>
         </div>
       </div>

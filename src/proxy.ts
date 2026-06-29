@@ -1,49 +1,69 @@
+import createIntlMiddleware from 'next-intl/middleware'
+import { routing } from './i18n/routing'
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+const handleI18n = createIntlMiddleware(routing)
+
+function getLocaleFromPath(pathname: string): string {
+  const match = pathname.match(/^\/(es|en)(?:\/|$)/)
+  return match ? match[1] : routing.defaultLocale
+}
+
+function isProtected(pathname: string): boolean {
+  return /^\/(es|en)\/app\//.test(pathname)
+}
+
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({
-    request,
-  })
+  const { pathname } = request.nextUrl
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
+  if (isProtected(pathname)) {
+    const locale = getLocaleFromPath(pathname)
+
+    // The intl middleware doesn't run for protected routes, so we must set
+    // X-NEXT-INTL-LOCALE manually — otherwise getRequestConfig always returns
+    // the default locale and useLocale() breaks locale switching.
+    const requestHeaders = new Headers(request.headers)
+    requestHeaders.set('X-NEXT-INTL-LOCALE', locale)
+
+    let response = NextResponse.next({ request: { headers: requestHeaders } })
+
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll()
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+            response = NextResponse.next({ request: { headers: requestHeaders } })
+            cookiesToSet.forEach(({ name, value, options }) =>
+              response.cookies.set(name, value, options)
+            )
+          },
         },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          )
-          response = NextResponse.next({ request })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          )
-        },
-      },
+      }
+    )
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      const loginUrl = new URL(`/${locale}/login`, request.url)
+      loginUrl.searchParams.set('next', pathname)
+      return NextResponse.redirect(loginUrl)
     }
-  )
 
-  // getUser() refresca el token si es necesario y lo escribe en cookies
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user && request.nextUrl.pathname.startsWith('/app')) {
-    const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('next', request.nextUrl.pathname)
-    return NextResponse.redirect(loginUrl)
+    return response
   }
 
-  return response
+  return handleI18n(request)
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
-  ],
+  matcher: ['/((?!_next|_vercel|.*\\..*).*)', '/'],
 }

@@ -1,11 +1,15 @@
-import Link from 'next/link'
+'use client'
+
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 
 interface Props {
   id: string
   alias: string
   avatar: string
   age_range: string | null
-  levelLabel: string
+  levelId: number
+  levelTitle: string | null
   completedMissions: number
 }
 
@@ -14,12 +18,21 @@ export function ChildProfileCard({
   alias,
   avatar,
   age_range,
-  levelLabel,
+  levelId,
+  levelTitle,
   completedMissions,
 }: Props) {
-  const ageLabel = age_range ? `${age_range} años` : null
-  const missionsText =
-    completedMissions === 1 ? '1 misión completada' : `${completedMissions} misiones completadas`
+  const t = useTranslations('familia')
+  const tLevels = useTranslations('levels')
+
+  const levelLabel =
+    levelId === 0
+      ? `${t('level')} 0 — ${tLevels('level0Name')}`
+      : levelTitle
+        ? `${t('level')} ${levelId} — ${levelTitle}`
+        : `${t('level')} ${levelId}`
+
+  const ageLabel = age_range ? `${age_range} ${t('years')}` : null
 
   return (
     <div className="group bg-white border border-[#E0E0F0] rounded-2xl p-6 flex flex-col gap-5 transition-all duration-300 hover:border-[#534AB7]/40 hover:shadow-[0_4px_24px_rgba(83,74,183,0.12)]">
@@ -38,7 +51,7 @@ export function ChildProfileCard({
         </div>
         <div className="flex items-center gap-2 text-sm">
           <span className="text-[#00B894]">✅</span>
-          <span className="text-[#4a4a6a]">{missionsText}</span>
+          <span className="text-[#4a4a6a]">{t('missionsCompleted', { count: completedMissions })}</span>
         </div>
       </div>
 
@@ -47,13 +60,13 @@ export function ChildProfileCard({
           href={`/app/perfil/${id}`}
           className="block w-full bg-[#00B894] hover:bg-[#009e7e] text-white font-bold py-3 rounded-xl text-center transition text-sm shadow-[0_2px_10px_rgba(0,184,148,0.2)]"
         >
-          ¡Continuar aventura!
+          {t('continueAdventure')}
         </Link>
         <Link
           href={`/app/progreso/${id}`}
           className="block w-full border border-[#534AB7]/30 hover:border-[#534AB7] hover:bg-[#EEF0FF] text-[#534AB7] font-semibold py-2.5 rounded-xl text-center transition text-sm"
         >
-          Ver progreso
+          {t('viewProgress')}
         </Link>
       </div>
     </div>

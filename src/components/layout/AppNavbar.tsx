@@ -1,11 +1,13 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { Link, usePathname } from '@/i18n/navigation'
 import { signOut } from '@/app/actions/auth'
 import { useProfileStore } from '@/stores/profileStore'
+import { LanguageSelector } from '@/components/ui/LanguageSelector'
 
 export function AppNavbar() {
+  const t = useTranslations('nav')
   const pathname = usePathname()
   const activeProfile = useProfileStore((s) => s.activeProfile)
 
@@ -35,7 +37,7 @@ export function AppNavbar() {
               : 'text-[#4a4a6a] hover:text-[#534AB7]',
           ].join(' ')}
         >
-          Familia
+          {t('family')}
         </Link>
         <Link
           href="/app/mapa"
@@ -46,11 +48,11 @@ export function AppNavbar() {
               : 'text-[#4a4a6a] hover:text-[#534AB7]',
           ].join(' ')}
         >
-          Mapa
+          {t('map')}
         </Link>
       </div>
 
-      {/* Profile info + sign out */}
+      {/* Profile info + language + sign out */}
       <div className="flex items-center gap-3 flex-shrink-0">
         {activeProfile && (
           <div className="hidden sm:flex items-center gap-2">
@@ -61,12 +63,14 @@ export function AppNavbar() {
           </div>
         )}
 
+        <LanguageSelector />
+
         <form action={signOut}>
           <button
             type="submit"
             className="border border-[#534AB7]/40 hover:border-[#534AB7] hover:bg-[#EEF0FF] text-[#534AB7] text-xs font-semibold px-3 py-1.5 rounded-lg transition-all duration-150"
           >
-            Cerrar sesión
+            {t('signOut')}
           </button>
         </form>
       </div>

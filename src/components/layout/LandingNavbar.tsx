@@ -1,13 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
+import { LanguageSelector } from '@/components/ui/LanguageSelector'
 
 interface Props {
   hasSession?: boolean
 }
 
 export function LandingNavbar({ hasSession = false }: Props) {
+  const t = useTranslations('nav')
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -20,15 +23,13 @@ export function LandingNavbar({ hasSession = false }: Props) {
   }, [])
 
   const navLinks = [
-    { href: '#como-funciona', label: 'Cómo funciona' },
-    { href: '#niveles', label: 'Niveles' },
-    { href: '#familias', label: 'Familias' },
-    { href: '#seguridad', label: 'Seguridad' },
-    { href: '#donar', label: 'Donar' },
+    { href: '#como-funciona', label: t('howItWorks') },
+    { href: '#niveles', label: t('levels') },
+    { href: '#familias', label: t('families') },
+    { href: '#seguridad', label: t('security') },
+    { href: '#donar', label: t('donate') },
   ]
 
-  // En el hero (sin scroll): fondo transparente, textos blancos
-  // Tras el scroll: fondo blanco, textos oscuros
   const linkClass = scrolled
     ? 'text-[#4a4a6a] hover:text-[#534AB7]'
     : 'text-white/80 hover:text-white'
@@ -68,14 +69,15 @@ export function LandingNavbar({ hasSession = false }: Props) {
           ))}
         </div>
 
-        {/* Auth buttons — desktop */}
+        {/* Auth buttons + language selector — desktop */}
         <div className="hidden md:flex items-center gap-3 flex-shrink-0">
+          <LanguageSelector />
           {hasSession ? (
             <Link
               href="/app/familia"
               className="bg-[#534AB7] hover:bg-[#4338ca] active:scale-95 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all duration-150"
             >
-              Ir a la plataforma →
+              {t('goToPlatform')}
             </Link>
           ) : (
             <>
@@ -88,13 +90,13 @@ export function LandingNavbar({ hasSession = false }: Props) {
                     : 'border-white/40 hover:border-white text-white',
                 ].join(' ')}
               >
-                Iniciar sesión
+                {t('login')}
               </Link>
               <Link
                 href="/registro"
                 className="bg-[#00B894] hover:bg-[#009e7e] active:scale-95 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all duration-150"
               >
-                Empezar gratis
+                {t('register')}
               </Link>
             </>
           )}
@@ -107,7 +109,7 @@ export function LandingNavbar({ hasSession = false }: Props) {
             'md:hidden transition-colors p-2 rounded-lg',
             scrolled ? 'text-[#4a4a6a] hover:text-[#1a1a2e]' : 'text-white/80 hover:text-white',
           ].join(' ')}
-          aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+          aria-label={menuOpen ? t('menuClose') : t('menuOpen')}
           aria-expanded={menuOpen}
         >
           <span className="text-xl">{menuOpen ? '✕' : '☰'}</span>
@@ -128,13 +130,16 @@ export function LandingNavbar({ hasSession = false }: Props) {
             </a>
           ))}
           <div className="flex flex-col gap-2 pt-3 mt-1 border-t border-[#E0E0F0]">
+            <div className="flex justify-center py-1">
+              <LanguageSelector />
+            </div>
             {!hasSession && (
               <Link
                 href="/login"
                 onClick={() => setMenuOpen(false)}
                 className="border border-[#534AB7]/50 text-[#534AB7] font-semibold px-4 py-3 rounded-xl text-sm text-center"
               >
-                Iniciar sesión
+                {t('login')}
               </Link>
             )}
             <Link
@@ -142,7 +147,7 @@ export function LandingNavbar({ hasSession = false }: Props) {
               onClick={() => setMenuOpen(false)}
               className="bg-[#534AB7] text-white font-bold px-4 py-3 rounded-xl text-sm text-center"
             >
-              {hasSession ? 'Ir a la plataforma →' : 'Empezar gratis'}
+              {hasSession ? t('goToPlatform') : t('register')}
             </Link>
           </div>
         </div>

@@ -1,14 +1,14 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { MapaClient } from '@/components/mission/MapaClient'
+import { RegistroForm } from './RegistroForm'
 
-export default async function MapaPage() {
+export default async function RegistroPage() {
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) redirect('/login')
+  if (user) redirect('/app/familia')
 
-  return <MapaClient locale="es" />
+  return <RegistroForm />
 }

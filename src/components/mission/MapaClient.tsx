@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import { LEVELS, type LevelData, type LevelStatus } from '@/lib/data/levels'
 import { MISSIONS } from '@/lib/data/missions'
 import { WorldNode } from './WorldNode'
@@ -74,7 +75,11 @@ function buildMissionsForLevel(levelId: number): MissionSummary[] {
     id: m.id,
     slug: m.id,
     title: m.title,
+    title_es: m.title_es,
+    title_en: m.title_en,
     objective: m.objective,
+    objective_es: m.objective_es,
+    objective_en: m.objective_en,
     world_order: m.order,
   }))
 }
@@ -83,7 +88,8 @@ const DEFAULT_SELECTED = LEVELS.find((l) => l.status === 'in_progress')?.id ?? 0
 
 // ── MapaClient ────────────────────────────────────────────────────────────────
 
-export function MapaClient() {
+export function MapaClient({ locale }: { locale: string }) {
+  const t = useTranslations('mapa')
   const [progressMap, setProgressMap] = useState<MissionProgressMap>({})
 
   const activeProfile = useProfileStore((s) => s.activeProfile)
@@ -114,11 +120,12 @@ export function MapaClient() {
       <div className="lg:w-3/5 w-full flex flex-col min-h-0 overflow-y-auto">
         {/* Header */}
         <div className="flex-shrink-0 px-4 pt-8 pb-6 text-center">
-          <h1 className="text-3xl font-bold text-[#1a1a2e]">Mapa de Mundos</h1>
+          <h1 className="text-3xl font-bold text-[#1a1a2e]">{t('title')}</h1>
           <p className="text-[#4a4a6a] mt-1 text-sm">
-            Ahora en:{' '}
+            {t('currentWorld')}{' '}
             <span className="text-[#534AB7] font-semibold">
-              {inProgressLevel.emoji} {inProgressLevel.title}
+              {inProgressLevel.emoji}{' '}
+              {locale === 'en' ? inProgressLevel.title_en : inProgressLevel.title_es}
             </span>
           </p>
         </div>
@@ -156,6 +163,7 @@ export function MapaClient() {
                           <WorldNode
                             level={level}
                             status={level.status}
+                            locale={locale}
                             onSelect={handleNodeSelect}
                             isSelected={level.id === selectedLevelId}
                           />
@@ -183,7 +191,7 @@ export function MapaClient() {
             href="/app/familia"
             className="text-[#4a4a6a] hover:text-[#534AB7] text-sm transition-colors"
           >
-            ← Cambiar aventurero
+            {t('changeAdventurer')}
           </Link>
         </div>
       </div>
@@ -193,9 +201,10 @@ export function MapaClient() {
         <MissionListPanel
           missions={missionsForLevel}
           progressMap={progressMap}
-          levelTitle={selectedLevel.title}
+          levelTitle={locale === 'en' ? selectedLevel.title_en : selectedLevel.title_es}
           levelEmoji={selectedLevel.emoji}
           levelStatus={selectedLevel.status as LevelStatus}
+          locale={locale}
         />
       </div>
     </div>

@@ -1,13 +1,18 @@
 'use client'
 
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import type { LevelStatus } from '@/lib/data/levels'
 
 export interface MissionSummary {
   id: string
   slug: string
-  title: string
-  objective: string
+  title: string       // fallback (es)
+  title_es: string
+  title_en: string
+  objective: string   // fallback (es)
+  objective_es: string
+  objective_en: string
   world_order: number
 }
 
@@ -22,6 +27,7 @@ interface Props {
   levelTitle: string
   levelEmoji: string
   levelStatus: LevelStatus
+  locale: string
 }
 
 type EffectiveStatus = 'completed' | 'playable' | 'locked'
@@ -54,7 +60,10 @@ export function MissionListPanel({
   levelTitle,
   levelEmoji,
   levelStatus,
+  locale,
 }: Props) {
+  const t = useTranslations('mapa')
+
   return (
     <div className="flex flex-col h-full bg-white border-l border-[#E0E0F0]">
       {/* ── Panel header ─────────────────────────────────────── */}
@@ -65,8 +74,8 @@ export function MissionListPanel({
             <h2 className="text-[#1a1a2e] font-bold text-base leading-tight">{levelTitle}</h2>
             <p className="text-[#4a4a6a] text-[11px] mt-0.5">
               {missions.length > 0
-                ? `${missions.length} misión${missions.length !== 1 ? 'es' : ''}`
-                : 'Sin misiones aún'}
+                ? t('missionCount', { count: missions.length })
+                : t('noMissions')}
             </p>
           </div>
         </div>
@@ -77,9 +86,9 @@ export function MissionListPanel({
         {missions.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center py-16 gap-3">
             <span className="text-5xl">🔧</span>
-            <p className="text-[#1a1a2e] font-semibold text-sm">¡Próximamente!</p>
+            <p className="text-[#1a1a2e] font-semibold text-sm">{t('comingSoon')}</p>
             <p className="text-[#4a4a6a] text-xs leading-relaxed max-w-[200px]">
-              Las misiones de este mundo están en construcción. ¡Vuelve pronto!
+              {t('comingSoonDesc')}
             </p>
           </div>
         ) : (
@@ -99,6 +108,8 @@ export function MissionListPanel({
                   mission={mission}
                   index={idx}
                   status={effectiveStatus}
+                  playLabel={t('play')}
+                  locale={locale}
                 />
               )
             })
@@ -112,17 +123,23 @@ function MissionItem({
   mission,
   index,
   status,
+  playLabel,
+  locale,
 }: {
   mission: MissionSummary
   index: number
   status: EffectiveStatus
+  playLabel: string
+  locale: string
 }) {
   const num = String(index + 1).padStart(2, '0')
+  const title = locale === 'en' ? mission.title_en : mission.title_es
+  const objective = locale === 'en' ? mission.objective_en : mission.objective_es
 
   if (status === 'completed') {
     return (
       <Link
-        href={`/app/mision/${mission.id}`}
+        href={`/app/mision/${mission.id}` as `/app/mision/${string}`}
         className="group flex items-start gap-3 bg-[#E8F8F5] border border-[#00B894]/30 hover:border-[#00B894]/60 rounded-xl p-3.5 transition-all duration-200 block"
       >
         <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#00B894]/20 flex items-center justify-center mt-0.5">
@@ -130,10 +147,10 @@ function MissionItem({
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-[#007a5e] font-semibold text-sm leading-tight truncate">
-            {mission.title}
+            {title}
           </p>
           <p className="text-[#007a5e]/60 text-xs mt-0.5 leading-snug line-clamp-2">
-            {mission.objective}
+            {objective}
           </p>
         </div>
         <span className="flex-shrink-0 text-[#00B894]/40 text-[10px] font-mono self-center group-hover:text-[#00B894]/70 transition-colors">
@@ -150,16 +167,16 @@ function MissionItem({
           {num}
         </span>
         <div className="flex-1 min-w-0">
-          <p className="text-[#1a1a2e] font-semibold text-sm leading-tight">{mission.title}</p>
+          <p className="text-[#1a1a2e] font-semibold text-sm leading-tight">{title}</p>
           <p className="text-[#4a4a6a] text-xs mt-0.5 leading-snug line-clamp-2">
-            {mission.objective}
+            {objective}
           </p>
         </div>
         <Link
-          href={`/app/mision/${mission.id}`}
+          href={`/app/mision/${mission.id}` as `/app/mision/${string}`}
           className="flex-shrink-0 bg-[#00B894] hover:bg-[#009e7e] active:bg-[#008060] text-white font-bold text-xs px-3.5 py-2 rounded-lg transition-colors self-center"
         >
-          ¡Jugar!
+          {playLabel}
         </Link>
       </div>
     )
@@ -172,9 +189,9 @@ function MissionItem({
         {num}
       </span>
       <div className="flex-1 min-w-0">
-        <p className="text-[#4a4a6a]/60 font-semibold text-sm leading-tight">{mission.title}</p>
+        <p className="text-[#4a4a6a]/60 font-semibold text-sm leading-tight">{title}</p>
         <p className="text-[#4a4a6a]/40 text-xs mt-0.5 leading-snug line-clamp-2">
-          {mission.objective}
+          {objective}
         </p>
       </div>
       <span className="flex-shrink-0 text-xl self-center">🔒</span>

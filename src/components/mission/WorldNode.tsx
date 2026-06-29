@@ -1,10 +1,12 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import type { LevelData, LevelStatus } from '@/lib/data/levels'
 
 interface Props {
   level: LevelData
   status: LevelStatus
+  locale: string
   onSelect?: (levelId: number) => void
   isSelected?: boolean
 }
@@ -27,7 +29,19 @@ const TITLE_COLOR: Record<LevelStatus, string> = {
   locked: 'text-[#4a4a6a]/50',
 }
 
-export function WorldNode({ level, status, onSelect, isSelected }: Props) {
+export function WorldNode({ level, status, locale, onSelect, isSelected }: Props) {
+  const t = useTranslations('mapa')
+  const levelTitle = locale === 'en' ? level.title_en : level.title_es
+
+  const statusLabel =
+    status === 'locked'
+      ? t('locked')
+      : status === 'completed'
+        ? t('completed')
+        : status === 'in_progress'
+          ? t('inProgress')
+          : t('available')
+
   function handleClick() {
     if (status === 'locked') return
     onSelect?.(level.id)
@@ -38,15 +52,7 @@ export function WorldNode({ level, status, onSelect, isSelected }: Props) {
       <button
         onClick={handleClick}
         disabled={status === 'locked'}
-        aria-label={`${level.title} — ${
-          status === 'locked'
-            ? 'bloqueado'
-            : status === 'completed'
-              ? 'completado'
-              : status === 'in_progress'
-                ? 'en progreso'
-                : 'disponible'
-        }`}
+        aria-label={`${levelTitle} — ${statusLabel}`}
         className={[
           'w-[72px] h-[72px] rounded-full border-2 flex flex-col items-center justify-center transition-all duration-300 relative select-none',
           STATUS_STYLES[status],
@@ -67,15 +73,15 @@ export function WorldNode({ level, status, onSelect, isSelected }: Props) {
       </button>
 
       <div className="text-center max-w-[88px]">
-        <p className={`text-[10px] leading-tight ${TITLE_COLOR[status]}`}>{level.title}</p>
+        <p className={`text-[10px] leading-tight ${TITLE_COLOR[status]}`}>{levelTitle}</p>
         {status === 'in_progress' && (
           <span className="inline-block mt-0.5 text-[9px] bg-[#EEF0FF] text-[#534AB7] border border-[#534AB7]/30 rounded-full px-1.5 py-0.5 leading-none">
-            activo
+            {t('active')}
           </span>
         )}
         {isSelected && status !== 'in_progress' && (
           <span className="inline-block mt-0.5 text-[9px] bg-[#EEF0FF] text-[#534AB7] rounded-full px-1.5 py-0.5 leading-none">
-            seleccionado
+            {t('selected')}
           </span>
         )}
       </div>

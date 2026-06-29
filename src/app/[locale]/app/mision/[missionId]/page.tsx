@@ -4,11 +4,11 @@ import { getMissionById } from '@/lib/data/missions'
 import { MissionScreen } from '@/components/mission/MissionScreen'
 
 interface Props {
-  params: Promise<{ missionId: string }>
+  params: Promise<{ locale: string; missionId: string }>
 }
 
 export default async function MisionPage({ params }: Props) {
-  const { missionId } = await params
+  const { locale, missionId } = await params
 
   const supabase = await createClient()
   const {
@@ -20,5 +20,5 @@ export default async function MisionPage({ params }: Props) {
   const mission = getMissionById(missionId)
   if (!mission) redirect('/app/mapa')
 
-  return <MissionScreen mission={mission!} locale="es" />
+  return <MissionScreen mission={mission!} locale={locale} />
 }

@@ -2,7 +2,13 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { MapaClient } from '@/components/mission/MapaClient'
 
-export default async function MapaPage() {
+interface Props {
+  params: Promise<{ locale: string }>
+}
+
+export default async function MapaPage({ params }: Props) {
+  const { locale } = await params
+
   const supabase = await createClient()
   const {
     data: { user },
@@ -10,5 +16,5 @@ export default async function MapaPage() {
 
   if (!user) redirect('/login')
 
-  return <MapaClient locale="es" />
+  return <MapaClient locale={locale} />
 }

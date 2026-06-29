@@ -42,6 +42,17 @@ export interface Mission {
   instructions: string
   starter_code: string | null
   solution_code: string | null
+  // Translated content columns
+  title_es: string | null
+  title_en: string | null
+  story_es: string | null
+  story_en: string | null
+  objective_es: string | null
+  objective_en: string | null
+  concept_es: string | null
+  concept_en: string | null
+  hints_es: string[] | null
+  hints_en: string[] | null
 }
 
 export type MissionStatus = 'locked' | 'available' | 'in_progress' | 'completed'

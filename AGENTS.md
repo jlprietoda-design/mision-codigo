@@ -71,11 +71,100 @@ Decisiones importantes:
 
 - Server Actions en `src/app/actions/`.
 - Hooks personalizados en `src/hooks/`.
-- Todos los textos de la UI en español.
 - Mensajes de error amigables, nunca técnicos (no mostrar stack traces ni mensajes de Supabase al usuario).
 - Loading states en todos los botones de formulario.
 - Validación en cliente antes de enviar al servidor.
 - No añadir comentarios que expliquen QUÉ hace el código — solo añadir comentarios cuando el POR QUÉ no es obvio.
+
+## Internacionalización (i18n) — OBLIGATORIO
+
+Este proyecto usa **next-intl v4** con locales `['es', 'en']` y `defaultLocale 'es'`.
+
+### Estructura de archivos
+
+- `src/messages/es.json` — todas las cadenas en español
+- `src/messages/en.json` — todas las cadenas en inglés
+- `src/i18n/routing.ts` — configuración de locales
+- `src/i18n/request.ts` — carga de mensajes por locale
+- `src/i18n/navigation.ts` — `Link`, `useRouter`, `usePathname` con locale
+
+### Reglas obligatorias
+
+1. **NUNCA escribir texto hardcodeado en los componentes.** Todo texto visible debe venir de los archivos de traducción.
+
+2. Server Components usan `getTranslations()`:
+   ```ts
+   const t = await getTranslations('seccion');
+   ```
+
+3. Client Components usan `useTranslations()`:
+   ```ts
+   const t = useTranslations('seccion');
+   ```
+
+4. Para obtener el locale en Server Components:
+   ```ts
+   import { getLocale } from 'next-intl/server';
+   const locale = await getLocale();
+   ```
+   Preferible: extraer `locale` de `await params` cuando esté disponible (es la fuente de verdad).
+
+5. Para obtener el locale en Client Components:
+   ```ts
+   import { useLocale } from 'next-intl';
+   const locale = useLocale();
+   ```
+
+6. **Navegación siempre con next-intl** (nunca `next/navigation` para links internos):
+   ```ts
+   import { Link, useRouter, usePathname } from '@/i18n/navigation';
+   ```
+
+7. **Rutas:** todas bajo `src/app/[locale]/` — NUNCA crear rutas nuevas fuera de `[locale]/`. Las rutas en `src/app/app/` son legado pre-i18n; no ampliarlas.
+
+8. **Contenido de base de datos bilingüe:**
+   - Las misiones tienen campos `_es` y `_en`: `title_es`, `title_en`, `story_es`, `story_en`, `objective_es`, `objective_en`, `concept_es`, `concept_en`, `hints_es`, `hints_en`.
+   - Seleccionar campo según locale: `locale === 'en' ? mission.title_en : mission.title_es`
+   - Al crear nuevas misiones en `missions.ts` y en SQL seeds, incluir **siempre** ambos idiomas.
+
+9. **Al añadir texto nuevo:**
+   - Añadir la clave en `es.json` **y** en `en.json` simultáneamente.
+   - Nunca dejar una clave sin traducción en alguno de los dos archivos.
+
+10. **Nombres de niveles bilingües** en `src/lib/data/levels.ts`:
+    - `LevelData` tiene `title_es` y `title_en`.
+    - Usar `locale === 'en' ? level.title_en : level.title_es` para seleccionar el correcto.
+
+### Secciones actuales en `es.json` / `en.json`
+
+| Namespace    | Contenido                          |
+|--------------|------------------------------------|
+| `nav`        | Navegación global                  |
+| `hero`       | Sección hero de la landing         |
+| `trust`      | Barra de confianza                 |
+| `howItWorks` | Cómo funciona                      |
+| `levels`     | Preview de niveles                 |
+| `families`   | Sección familias                   |
+| `security`   | Seguridad                          |
+| `donate`     | Donaciones                         |
+| `footer`     | Pie de página                      |
+| `auth`       | Login y registro                   |
+| `familia`    | Panel familiar                     |
+| `mision`     | Pantalla de misión                 |
+| `mapa`       | Mapa de mundos                     |
+| `perfil`     | Panel del niño                     |
+
+### Estado de traducción por pantalla
+
+| Pantalla                    | Estado                                                            |
+|-----------------------------|-------------------------------------------------------------------|
+| Landing page                | ✅ Completamente traducida                                        |
+| Auth (login/registro)       | ✅ Traducido                                                      |
+| Panel familiar              | ✅ Traducido                                                      |
+| Panel del niño (perfil)     | ✅ Traducido                                                      |
+| Mapa de mundos              | ✅ Traducido, incluyendo nombres de niveles (`title_es`/`title_en`) |
+| Pantalla de misión          | ✅ Traducida, incluyendo contenido de misiones (campos `_es`/`_en`) |
+| Panel de progreso           | 🔲 Pendiente de revisar                                          |
 
 ## Diseño visual
 
@@ -139,7 +228,7 @@ Robot mentor amable que acompaña al niño durante las misiones. En MVP usa pist
 | Landing page pública                              | ✅ Completada     |
 | Tema visual claro                                 | ✅ Completado     |
 | Cierre de sesión                                  | ✅ Completado     |
-| Internacionalización (i18n)                       | 🔲 Pendiente     |
+| Internacionalización (i18n) ES/EN                 | ✅ Completada     |
 | Asistente Codi                                    | 🔲 Pendiente     |
 | Misiones Nivel 1                                  | 🔲 Pendiente     |
 | Páginas secundarias (/familias, /seguridad, etc.) | 🔲 Pendiente     |

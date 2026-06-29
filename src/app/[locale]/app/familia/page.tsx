@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
+import { getTranslations } from 'next-intl/server'
 import { createClient } from '@/lib/supabase/server'
 import { ChildProfileCard } from '@/components/family/ChildProfileCard'
 
@@ -11,8 +12,10 @@ export default async function FamiliaPage() {
   } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const t = await getTranslations('familia')
+
   const [{ data: profileRow }, { data: childProfiles }] = await Promise.all([
-    supabase.from('profiles').select('name').eq('id', user.id).single(),
+    supabase.from('profiles').select('name').eq('id', user!.id).single(),
     supabase
       .from('child_profiles')
       .select('id, alias, avatar, age_range, current_level_id')
@@ -55,15 +58,15 @@ export default async function FamiliaPage() {
     return (
       <div className="min-h-[calc(100vh-4rem)] bg-[#F8F9FF] flex flex-col items-center justify-center px-4 text-center">
         <div className="text-8xl mb-6">🤖</div>
-        <h1 className="text-4xl font-bold text-[#1a1a2e] mb-3">¡Hola, {adultName}!</h1>
+        <h1 className="text-4xl font-bold text-[#1a1a2e] mb-3">{t('emptyTitle', { name: adultName })}</h1>
         <p className="text-[#4a4a6a] text-lg mb-8 max-w-md">
-          Aún no tienes aventureros. Crea el primer perfil para que tu hijo empiece su misión.
+          {t('emptySubtitle')}
         </p>
         <Link
           href="/app/familia/nuevo-perfil"
           className="bg-[#00B894] hover:bg-[#009e7e] text-white font-bold px-8 py-4 rounded-xl text-lg transition shadow-[0_2px_16px_rgba(0,184,148,0.3)]"
         >
-          Crear primer perfil
+          {t('createFirst')}
         </Link>
       </div>
     )
@@ -74,14 +77,14 @@ export default async function FamiliaPage() {
       <div className="max-w-5xl mx-auto">
         <div className="flex items-start justify-between mb-10">
           <div>
-            <h1 className="text-4xl font-bold text-[#1a1a2e]">Mis aventureros</h1>
-            <p className="text-[#4a4a6a] mt-1">Panel de {adultName}</p>
+            <h1 className="text-4xl font-bold text-[#1a1a2e]">{t('title')}</h1>
+            <p className="text-[#4a4a6a] mt-1">{t('panel', { name: adultName })}</p>
           </div>
           <Link
             href="/app/familia/nuevo-perfil"
             className="bg-[#534AB7] hover:bg-[#4338ca] text-white font-semibold px-5 py-2.5 rounded-xl transition text-sm whitespace-nowrap shadow-[0_2px_12px_rgba(83,74,183,0.2)]"
           >
-            + Añadir perfil
+            {t('addProfile')}
           </Link>
         </div>
 

@@ -1,8 +1,8 @@
 'use client'
 
 import { useRef, useState, useMemo } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { Link, useRouter } from '@/i18n/navigation'
 import { executeMission } from '@/lib/mission-engine/executor'
 import type { Block, ExecutionResult } from '@/lib/mission-engine/types'
 import type { MissionData } from '@/lib/data/missions'
@@ -20,9 +20,21 @@ function sleep(ms: number) {
 
 interface Props {
   mission: MissionData
+  locale: string
 }
 
-export function MissionScreen({ mission }: Props) {
+function pick<T>(es: T, en: T, locale: string): T {
+  return locale === 'en' ? en : es
+}
+
+export function MissionScreen({ mission, locale }: Props) {
+  const t = useTranslations('mision')
+
+  const title = pick(mission.title_es, mission.title_en, locale)
+  const story = pick(mission.story_es, mission.story_en, locale)
+  const objective = pick(mission.objective_es, mission.objective_en, locale)
+  const concept = pick(mission.concept_es, mission.concept_en, locale)
+  const hints = pick(mission.hints_es, mission.hints_en, locale)
   const [programBlocks, setProgramBlocks] = useState<Block[]>([])
   const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null)
   const [currentStepIdx, setCurrentStepIdx] = useState(0)
@@ -73,10 +85,10 @@ export function MissionScreen({ mission }: Props) {
   }
 
   function handleHint() {
-    if (hintIdx < mission.hints.length - 1) {
+    if (hintIdx < hints.length - 1) {
       hintsUsedRef.current += 1
     }
-    setHintIdx((prev) => Math.min(prev + 1, mission.hints.length - 1))
+    setHintIdx((prev) => Math.min(prev + 1, hints.length - 1))
     setShowFailure(false)
   }
 
@@ -132,7 +144,7 @@ export function MissionScreen({ mission }: Props) {
     }
   }
 
-  const activeHint = hintIdx >= 0 ? mission.hints[hintIdx] : null
+  const activeHint = hintIdx >= 0 ? hints[hintIdx] : null
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-[#F8F9FF] overflow-hidden">
@@ -143,15 +155,19 @@ export function MissionScreen({ mission }: Props) {
           onClick={handleGoToMap}
           className="flex items-center gap-1.5 text-[#4a4a6a] hover:text-[#534AB7] transition text-sm"
         >
-          ← Mapa
+          {t('backToMap')}
         </button>
         <div className="text-center">
-          <h1 className="text-[#1a1a2e] font-bold text-sm leading-tight">{mission.title}</h1>
-          <p className="text-[#4a4a6a] text-[11px]">Nivel {mission.levelId} · Misión {mission.order}</p>
+          <h1 className="text-[#1a1a2e] font-bold text-sm leading-tight">{title}</h1>
+          <p className="text-[#4a4a6a] text-[11px]">
+            {t('levelMission', { level: mission.levelId, order: mission.order })}
+          </p>
         </div>
         <div className="text-[#4a4a6a] text-xs text-right">
           {programBlocks.length > 0 && !isAnimating && (
-            <span className="text-[#4a4a6a]/70">{programBlocks.length} bloques</span>
+            <span className="text-[#4a4a6a]/70">
+              {t('blocksCount', { count: programBlocks.length })}
+            </span>
           )}
         </div>
       </header>
@@ -166,32 +182,32 @@ export function MissionScreen({ mission }: Props) {
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xl">🤖</span>
-                <h2 className="text-[#1a1a2e] font-bold text-sm">Historia</h2>
+                <h2 className="text-[#1a1a2e] font-bold text-sm">{t('story')}</h2>
               </div>
-              <p className="text-[#4a4a6a] text-xs leading-relaxed">{mission.story}</p>
+              <p className="text-[#4a4a6a] text-xs leading-relaxed">{story}</p>
             </div>
 
             {/* Objective */}
             <div className="bg-[#EEF0FF] border border-[#534AB7]/20 rounded-xl p-3">
               <p className="text-xs font-semibold text-[#534AB7] uppercase tracking-wider mb-1">
-                Objetivo
+                {t('objective')}
               </p>
-              <p className="text-[#1a1a2e] text-xs leading-relaxed">{mission.objective}</p>
+              <p className="text-[#1a1a2e] text-xs leading-relaxed">{objective}</p>
             </div>
 
             {/* Concept */}
             <div className="bg-[#E8F8F5] border border-[#00B894]/20 rounded-xl p-3">
               <p className="text-xs font-semibold text-[#00B894] uppercase tracking-wider mb-1">
-                💡 Concepto
+                {t('conceptLabel')}
               </p>
-              <p className="text-[#1a1a2e] text-xs leading-relaxed">{mission.concept}</p>
+              <p className="text-[#1a1a2e] text-xs leading-relaxed">{concept}</p>
             </div>
 
             {/* Hint */}
             {activeHint && (
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
                 <p className="text-xs font-semibold text-amber-600 mb-1">
-                  💡 Pista {hintIdx + 1}/{mission.hints.length}
+                  {t('hintLabel', { current: hintIdx + 1, total: hints.length })}
                 </p>
                 <p className="text-amber-800 text-xs leading-relaxed">{activeHint}</p>
               </div>
@@ -229,14 +245,14 @@ export function MissionScreen({ mission }: Props) {
           <div className="bg-white border border-[#E0E0F0] rounded-2xl p-8 max-w-sm w-full text-center shadow-[0_8px_40px_rgba(83,74,183,0.2)]">
             <div className="text-6xl mb-1 animate-bounce">🎉</div>
             <div className="text-4xl mb-4">⭐⭐⭐</div>
-            <h2 className="text-3xl font-bold text-[#1a1a2e] mb-2">¡Misión superada!</h2>
+            <h2 className="text-3xl font-bold text-[#1a1a2e] mb-2">{t('successTitle')}</h2>
             <p className="text-[#4a4a6a] text-sm mb-5">
-              Completaste la misión {mission.order} del nivel {mission.levelId}.
+              {t('successSubtitle', { order: mission.order, level: mission.levelId })}
             </p>
 
             <div className="bg-[#E8F8F5] border border-[#00B894]/30 rounded-xl p-4 mb-6 text-left">
-              <p className="text-[#00B894] text-xs font-semibold mb-1">💡 Aprendiste</p>
-              <p className="text-[#1a1a2e] text-sm leading-relaxed">{mission.concept}</p>
+              <p className="text-[#00B894] text-xs font-semibold mb-1">{t('learned')}</p>
+              <p className="text-[#1a1a2e] text-sm leading-relaxed">{concept}</p>
             </div>
 
             <div className="flex gap-3">
@@ -244,21 +260,21 @@ export function MissionScreen({ mission }: Props) {
                 onClick={handleGoToMap}
                 className="flex-1 border border-[#E0E0F0] hover:border-[#534AB7]/40 hover:bg-[#EEF0FF] text-[#4a4a6a] hover:text-[#534AB7] font-semibold py-3 rounded-xl text-center transition text-sm"
               >
-                🗺️ Volver al mapa
+                {t('backToMapBtn')}
               </button>
               {nextMission ? (
                 <Link
-                  href={`/app/mision/${nextMission.id}`}
+                  href={`/app/mision/${nextMission.id}` as `/app/mision/${string}`}
                   className="flex-1 bg-[#00B894] hover:bg-[#009e7e] text-white font-bold py-3 rounded-xl text-center transition text-sm"
                 >
-                  Siguiente ▶
+                  {t('next')}
                 </Link>
               ) : (
                 <button
                   onClick={handleGoToMap}
                   className="flex-1 bg-[#534AB7] hover:bg-[#4338ca] text-white font-bold py-3 rounded-xl text-center transition text-sm"
                 >
-                  🏆 ¡Nivel completado!
+                  {t('levelComplete')}
                 </button>
               )}
             </div>
@@ -271,7 +287,7 @@ export function MissionScreen({ mission }: Props) {
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 px-4">
           <div className="bg-white border border-[#E0E0F0] rounded-2xl p-8 max-w-sm w-full text-center shadow-[0_8px_40px_rgba(83,74,183,0.2)]">
             <div className="text-5xl mb-3">😅</div>
-            <h2 className="text-2xl font-bold text-[#1a1a2e] mb-2">¡Casi lo tienes!</h2>
+            <h2 className="text-2xl font-bold text-[#1a1a2e] mb-2">{t('failureTitle')}</h2>
 
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
               <p className="text-red-600 text-sm leading-relaxed">{executionResult.message}</p>
@@ -285,13 +301,13 @@ export function MissionScreen({ mission }: Props) {
                 }}
                 className="flex-1 bg-[#534AB7] hover:bg-[#4338ca] text-white font-bold py-3 rounded-xl transition text-sm"
               >
-                ↺ Reintentar
+                {t('retry')}
               </button>
               <button
                 onClick={handleHint}
                 className="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 font-semibold py-3 rounded-xl transition text-sm"
               >
-                💡 Pedir pista
+                {t('askHint')}
               </button>
             </div>
           </div>
