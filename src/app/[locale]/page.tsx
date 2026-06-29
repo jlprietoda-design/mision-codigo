@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { LandingNavbar } from '@/components/layout/LandingNavbar'
+import { LandingFooter } from '@/components/layout/LandingFooter'
 import { StarryBackground } from '@/components/ui/StarryBackground'
 import { DonationWidget } from '@/components/ui/DonationWidget'
 import { createClient } from '@/lib/supabase/server'
@@ -32,7 +33,6 @@ export default async function HomePage() {
   const tLevels = await getTranslations('levels')
   const tFam = await getTranslations('families')
   const tSec = await getTranslations('security')
-  const tFooter = await getTranslations('footer')
 
   const HOW_IT_WORKS = HOW_IT_WORKS_STEPS.map((step, i) => ({
     step,
@@ -270,49 +270,7 @@ export default async function HomePage() {
         <DonationWidget />
 
         {/* ── FOOTER ──────────────────────────────────────────── */}
-        <footer className="border-t border-[#E0E0F0] py-14 px-4 bg-white">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-10">
-              <div className="max-w-xs">
-                <div className="flex items-center gap-2 font-bold text-[#1a1a2e] text-xl mb-3">
-                  <span className="text-2xl">🤖</span>
-                  <span>Misión Código</span>
-                </div>
-                <p className="text-[#4a4a6a] text-sm leading-relaxed">
-                  {tFooter('tagline')}
-                </p>
-              </div>
-
-              <div className="flex gap-14 text-sm flex-shrink-0">
-                <div className="flex flex-col gap-3">
-                  <p className="text-[#1a1a2e] text-xs font-semibold uppercase tracking-wider mb-1">
-                    {tFooter('platformHeading')}
-                  </p>
-                  <a href="#como-funciona" className="text-[#4a4a6a] hover:text-[#534AB7] transition-colors">{tFooter('howItWorks')}</a>
-                  <a href="#niveles" className="text-[#4a4a6a] hover:text-[#534AB7] transition-colors">{tFooter('levels')}</a>
-                  <Link href="/registro" className="text-[#4a4a6a] hover:text-[#534AB7] transition-colors">{tFooter('startFree')}</Link>
-                </div>
-                <div className="flex flex-col gap-3">
-                  <p className="text-[#1a1a2e] text-xs font-semibold uppercase tracking-wider mb-1">
-                    {tFooter('communityHeading')}
-                  </p>
-                  <a href="#familias" className="text-[#4a4a6a] hover:text-[#534AB7] transition-colors">{tFooter('forFamilies')}</a>
-                  <a href="#seguridad" className="text-[#4a4a6a] hover:text-[#534AB7] transition-colors">{tFooter('security')}</a>
-                  <a href="#donar" className="text-[#4a4a6a] hover:text-[#534AB7] transition-colors">{tFooter('donate')}</a>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-[#E0E0F0] pt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <p className="text-[#4a4a6a] text-sm">
-                {tFooter('madeWith')}
-              </p>
-              <Link href="/login" className="text-[#534AB7] hover:text-[#4338ca] text-sm transition-colors font-medium">
-                {tFooter('signIn')}
-              </Link>
-            </div>
-          </div>
-        </footer>
+        <LandingFooter />
 
       </div>
     </>

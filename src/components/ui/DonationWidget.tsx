@@ -33,7 +33,7 @@ export function DonationWidget() {
   const mailtoSubject = `Donación Misión Código${amountLabel ? ` - ${amountLabel}${isMonthly ? '/mes' : ''}` : ''}`
 
   return (
-    <section id="donar" className="py-24 px-4 bg-[#EEF0FF]">
+    <section className="py-24 px-4 bg-[#EEF0FF]">
       <div className="max-w-xl mx-auto">
         {/* Heading */}
         <div className="text-center mb-8">

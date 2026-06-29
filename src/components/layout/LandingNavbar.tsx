@@ -7,30 +7,33 @@ import { LanguageSelector } from '@/components/ui/LanguageSelector'
 
 interface Props {
   hasSession?: boolean
+  forceWhite?: boolean
 }
 
-export function LandingNavbar({ hasSession = false }: Props) {
+export function LandingNavbar({ hasSession = false, forceWhite = false }: Props) {
   const t = useTranslations('nav')
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
+    if (forceWhite) return
     function onScroll() {
       setScrolled(window.scrollY > 10)
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [forceWhite])
 
-  const navLinks = [
-    { href: '#como-funciona', label: t('howItWorks') },
-    { href: '#niveles', label: t('levels') },
-    { href: '#familias', label: t('families') },
-    { href: '#seguridad', label: t('security') },
-    { href: '#donar', label: t('donate') },
+  const pageLinks = [
+    { href: '/como-funciona' as const, label: t('howItWorks') },
+    { href: '/niveles' as const, label: t('levels') },
+    { href: '/familias' as const, label: t('families') },
+    { href: '/seguridad' as const, label: t('security') },
+    { href: '/donar' as const, label: t('donate') },
   ]
 
-  const linkClass = scrolled
+  const isWhite = forceWhite || scrolled
+  const linkClass = isWhite
     ? 'text-[#4a4a6a] hover:text-[#534AB7]'
     : 'text-white/80 hover:text-white'
 
@@ -38,7 +41,7 @@ export function LandingNavbar({ hasSession = false }: Props) {
     <nav
       className={[
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        scrolled
+        isWhite
           ? 'bg-white border-b border-[#E0E0F0] shadow-[0_2px_12px_rgba(83,74,183,0.06)]'
           : 'bg-transparent border-b border-transparent',
       ].join(' ')}
@@ -49,7 +52,7 @@ export function LandingNavbar({ hasSession = false }: Props) {
           href="/"
           className={[
             'flex items-center gap-2 font-bold text-lg flex-shrink-0 hover:opacity-80 transition-opacity',
-            scrolled ? 'text-[#1a1a2e]' : 'text-white',
+            isWhite ? 'text-[#1a1a2e]' : 'text-white',
           ].join(' ')}
         >
           <span className="text-2xl">🤖</span>
@@ -58,14 +61,14 @@ export function LandingNavbar({ hasSession = false }: Props) {
 
         {/* Nav links — desktop */}
         <div className="hidden md:flex items-center gap-6 text-sm">
-          {navLinks.map(({ href, label }) => (
-            <a
+          {pageLinks.map(({ href, label }) => (
+            <Link
               key={href}
               href={href}
               className={`transition-colors duration-150 ${linkClass}`}
             >
               {label}
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -85,7 +88,7 @@ export function LandingNavbar({ hasSession = false }: Props) {
                 href="/login"
                 className={[
                   'border font-semibold px-4 py-2 rounded-xl text-sm transition-all duration-150',
-                  scrolled
+                  isWhite
                     ? 'border-[#534AB7]/50 hover:border-[#534AB7] text-[#534AB7]'
                     : 'border-white/40 hover:border-white text-white',
                 ].join(' ')}
@@ -107,7 +110,7 @@ export function LandingNavbar({ hasSession = false }: Props) {
           onClick={() => setMenuOpen((v) => !v)}
           className={[
             'md:hidden transition-colors p-2 rounded-lg',
-            scrolled ? 'text-[#4a4a6a] hover:text-[#1a1a2e]' : 'text-white/80 hover:text-white',
+            isWhite ? 'text-[#4a4a6a] hover:text-[#1a1a2e]' : 'text-white/80 hover:text-white',
           ].join(' ')}
           aria-label={menuOpen ? t('menuClose') : t('menuOpen')}
           aria-expanded={menuOpen}
@@ -119,15 +122,15 @@ export function LandingNavbar({ hasSession = false }: Props) {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-[#E0E0F0] px-4 py-4 flex flex-col gap-1 shadow-lg">
-          {navLinks.map(({ href, label }) => (
-            <a
+          {pageLinks.map(({ href, label }) => (
+            <Link
               key={href}
               href={href}
               onClick={() => setMenuOpen(false)}
               className="text-[#4a4a6a] hover:text-[#534AB7] text-sm py-2.5 px-2 rounded-lg hover:bg-[#EEF0FF] transition-colors"
             >
               {label}
-            </a>
+            </Link>
           ))}
           <div className="flex flex-col gap-2 pt-3 mt-1 border-t border-[#E0E0F0]">
             <div className="flex justify-center py-1">
