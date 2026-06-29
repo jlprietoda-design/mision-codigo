@@ -227,7 +227,13 @@
     "levelComplete": "🏆 ¡Nivel completado!",
     "failureTitle": "¡Casi lo tienes!",
     "retry": "↺ Reintentar",
-    "askHint": "💡 Pedir pista"
+    "askHint": "💡 Pedir pista",
+    "codiWelcome": "¡Hola! Soy Codi. Cuando necesites ayuda, pulsa el botón de pista. ¡Tú puedes!",
+    "codiRunning": "Ejecutando tu programa... ¡A ver qué pasa!",
+    "codiSuccess": "¡Lo conseguiste! ¡Eres un crack! 🎉",
+    "codiFail": "Casi casi... ¿Quieres una pista para la siguiente vez?",
+    "codiHintButton": "Pedir pista",
+    "codiNoMoreHints": "Ya usaste todas las pistas"
   },
   "donarPage": {
     "title": "Apoya Misión Código",

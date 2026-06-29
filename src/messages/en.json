@@ -227,7 +227,13 @@
     "levelComplete": "🏆 Level complete!",
     "failureTitle": "Almost there!",
     "retry": "↺ Try again",
-    "askHint": "💡 Get a hint"
+    "askHint": "💡 Get a hint",
+    "codiWelcome": "Hi! I'm Codi. When you need help, press the hint button. You've got this!",
+    "codiRunning": "Running your program... Let's see what happens!",
+    "codiSuccess": "You did it! You're amazing! 🎉",
+    "codiFail": "So close... Want a hint for next time?",
+    "codiHintButton": "Get a hint",
+    "codiNoMoreHints": "All hints used"
   },
   "donarPage": {
     "title": "Support Mission Code",

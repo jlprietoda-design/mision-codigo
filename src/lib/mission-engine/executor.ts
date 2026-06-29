@@ -69,6 +69,7 @@ export function executeMission(blocks: Block[], mapConfig: MapConfig): Execution
           success: false,
           message: 'Codi estuvo moviéndose demasiado tiempo. ¡Revisa cuántos pasos tiene tu programa!',
           steps,
+          errorType: 'timeout' as const,
         }
         return false
       }
@@ -84,6 +85,7 @@ export function executeMission(blocks: Block[], mapConfig: MapConfig): Execution
           success: false,
           message: '¡Codi se salió del mapa! Asegúrate de que no se caiga por los bordes.',
           steps,
+          errorType: 'out_of_bounds' as const,
         }
         return false
       }
@@ -94,6 +96,7 @@ export function executeMission(blocks: Block[], mapConfig: MapConfig): Execution
           success: false,
           message: '¡Codi chocó con algo! Revisa el camino y evita los obstáculos.',
           steps,
+          errorType: 'collision' as const,
         }
         return false
       }
@@ -194,5 +197,6 @@ export function executeMission(blocks: Block[], mapConfig: MapConfig): Execution
     success: false,
     message: 'Codi no llegó a la meta. ¿Le faltan pasos? ¿Va en la dirección correcta?',
     steps,
+    errorType: 'goal_not_reached' as const,
   }
 }

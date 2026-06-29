@@ -34,6 +34,7 @@ export interface ExecutionResult {
   message: string
   steps: ExecutionStep[]
   hintsTriggered?: string[]
+  errorType?: 'collision' | 'out_of_bounds' | 'goal_not_reached' | 'timeout'
 }
 
 export interface MapConfig {

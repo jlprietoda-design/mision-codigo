@@ -7,10 +7,13 @@ import { executeMission } from '@/lib/mission-engine/executor'
 import type { Block, ExecutionResult } from '@/lib/mission-engine/types'
 import type { MissionData } from '@/lib/data/missions'
 import { getNextMission } from '@/lib/data/missions'
+import { getContextualHint } from '@/lib/codi/hints'
 import { useProfileStore } from '@/stores/profileStore'
 import { saveMissionProgress, awardBadge } from '@/app/actions/progress'
 import { MissionGrid } from './MissionGrid'
 import { BlockPalette } from './BlockPalette'
+import { CodiAssistant } from './CodiAssistant'
+import type { CodiAnimation } from './CodiAssistant'
 
 const STEP_DELAY = 400
 
@@ -34,19 +37,25 @@ export function MissionScreen({ mission, locale }: Props) {
   const story = pick(mission.story_es, mission.story_en, locale)
   const objective = pick(mission.objective_es, mission.objective_en, locale)
   const concept = pick(mission.concept_es, mission.concept_en, locale)
-  const hints = pick(mission.hints_es, mission.hints_en, locale)
+
   const [programBlocks, setProgramBlocks] = useState<Block[]>([])
   const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null)
   const [currentStepIdx, setCurrentStepIdx] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [showFailure, setShowFailure] = useState(false)
-  const [hintIdx, setHintIdx] = useState(-1)
+
+  // Codi assistant state
+  const [codiMessage, setCodiMessage] = useState(() => t('codiWelcome'))
+  const [codiAnimation, setCodiAnimation] = useState<CodiAnimation>('talking')
+  const [codiHintsUsed, setCodiHintsUsed] = useState(0)
 
   const cancelRef = useRef(false)
   const mountedRef = useRef(true)
   const attemptsRef = useRef(0)
-  const hintsUsedRef = useRef(0)
+  const codiHintsRef = useRef(0)
+  const lastErrorRef = useRef<ExecutionResult['errorType'] | null>(null)
+  const talkTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const router = useRouter()
   const activeProfile = useProfileStore((s) => s.activeProfile)
@@ -67,6 +76,29 @@ export function MissionScreen({ mission, locale }: Props) {
       .flatMap((s) => (s.collected ? [s.collected] : []))
   }, [executionResult, currentStepIdx])
 
+  function codiSpeak(message: string, thenAnimation: CodiAnimation = 'idle') {
+    setCodiMessage(message)
+    setCodiAnimation('talking')
+    if (talkTimerRef.current) clearTimeout(talkTimerRef.current)
+    talkTimerRef.current = setTimeout(() => setCodiAnimation(thenAnimation), 2000)
+  }
+
+  function handleRequestHint() {
+    const hint = getContextualHint(
+      mission.id,
+      attemptsRef.current,
+      lastErrorRef.current,
+      codiHintsRef.current,
+      locale,
+    )
+    if (codiHintsRef.current < 3) {
+      codiHintsRef.current += 1
+      setCodiHintsUsed(codiHintsRef.current)
+    }
+    codiSpeak(hint, 'thinking')
+    setShowFailure(false)
+  }
+
   function addBlock(type: string) {
     setProgramBlocks((prev) => (prev.length < 20 ? [...prev, { type }] : prev))
   }
@@ -82,14 +114,8 @@ export function MissionScreen({ mission, locale }: Props) {
     setCurrentStepIdx(0)
     setShowSuccess(false)
     setShowFailure(false)
-  }
-
-  function handleHint() {
-    if (hintIdx < hints.length - 1) {
-      hintsUsedRef.current += 1
-    }
-    setHintIdx((prev) => Math.min(prev + 1, hints.length - 1))
-    setShowFailure(false)
+    lastErrorRef.current = null
+    codiSpeak(t('codiWelcome'), 'idle')
   }
 
   async function handleExecute() {
@@ -98,6 +124,7 @@ export function MissionScreen({ mission, locale }: Props) {
     cancelRef.current = false
     setShowSuccess(false)
     setShowFailure(false)
+    codiSpeak(t('codiRunning'), 'thinking')
 
     const result = executeMission(programBlocks, mission.mapConfig)
     setExecutionResult(result)
@@ -115,13 +142,14 @@ export function MissionScreen({ mission, locale }: Props) {
 
     if (result.success) {
       setShowSuccess(true)
+      codiSpeak(t('codiSuccess'), 'celebrating')
       if (activeProfile?.id) {
         void saveMissionProgress(
           activeProfile.id,
           mission.id,
           'completed',
           attemptsRef.current,
-          hintsUsedRef.current
+          codiHintsRef.current
         )
         if (mission.id === 'primeros-pasos-01') {
           void awardBadge(activeProfile.id, 'primera-instruccion')
@@ -131,20 +159,20 @@ export function MissionScreen({ mission, locale }: Props) {
         }
       }
     } else {
+      lastErrorRef.current = result.errorType ?? null
       setShowFailure(true)
+      codiSpeak(t('codiFail'), 'thinking')
       if (activeProfile?.id) {
         void saveMissionProgress(
           activeProfile.id,
           mission.id,
           'started',
           attemptsRef.current,
-          hintsUsedRef.current
+          codiHintsRef.current
         )
       }
     }
   }
-
-  const activeHint = hintIdx >= 0 ? hints[hintIdx] : null
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-[#F8F9FF] overflow-hidden">
@@ -175,13 +203,13 @@ export function MissionScreen({ mission, locale }: Props) {
       {/* ── Main 3-column layout ────────────────────────────── */}
       <div className="flex flex-1 overflow-hidden">
 
-        {/* Left: story + info ───────────────────────────────── */}
+        {/* Left: story + info + Codi ────────────────────────── */}
         <aside className="w-[260px] flex-shrink-0 flex flex-col overflow-y-auto border-r border-[#E0E0F0] bg-white">
           <div className="p-4 space-y-4 flex-1">
             {/* Story */}
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xl">🤖</span>
+                <span className="text-xl">📖</span>
                 <h2 className="text-[#1a1a2e] font-bold text-sm">{t('story')}</h2>
               </div>
               <p className="text-[#4a4a6a] text-xs leading-relaxed">{story}</p>
@@ -203,15 +231,13 @@ export function MissionScreen({ mission, locale }: Props) {
               <p className="text-[#1a1a2e] text-xs leading-relaxed">{concept}</p>
             </div>
 
-            {/* Hint */}
-            {activeHint && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
-                <p className="text-xs font-semibold text-amber-600 mb-1">
-                  {t('hintLabel', { current: hintIdx + 1, total: hints.length })}
-                </p>
-                <p className="text-amber-800 text-xs leading-relaxed">{activeHint}</p>
-              </div>
-            )}
+            {/* Codi assistant */}
+            <CodiAssistant
+              message={codiMessage}
+              animation={codiAnimation}
+              hintsUsed={codiHintsUsed}
+              onRequestHint={handleRequestHint}
+            />
           </div>
         </aside>
 
@@ -233,7 +259,7 @@ export function MissionScreen({ mission, locale }: Props) {
             onRemoveBlock={removeBlock}
             onExecute={handleExecute}
             onReset={handleReset}
-            onHint={handleHint}
+            onHint={handleRequestHint}
             isAnimating={isAnimating}
           />
         </aside>
@@ -304,7 +330,7 @@ export function MissionScreen({ mission, locale }: Props) {
                 {t('retry')}
               </button>
               <button
-                onClick={handleHint}
+                onClick={handleRequestHint}
                 className="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 font-semibold py-3 rounded-xl transition text-sm"
               >
                 {t('askHint')}
