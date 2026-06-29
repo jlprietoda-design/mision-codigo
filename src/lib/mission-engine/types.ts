@@ -42,6 +42,8 @@ export interface MapConfig {
   height: number
   start: { x: number; y: number; direction: Direction }
   goal: { x: number; y: number }
+  goalEmoji?: string
   obstacles?: { x: number; y: number }[]
-  items?: { x: number; y: number; id: string }[]
+  items?: { x: number; y: number; id: string; emoji?: string }[]
+  requiredItem?: string
 }

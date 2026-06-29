@@ -38,7 +38,7 @@ export function MissionScreen({ mission, locale }: Props) {
   const objective = pick(mission.objective_es, mission.objective_en, locale)
   const concept = pick(mission.concept_es, mission.concept_en, locale)
 
-  const [programBlocks, setProgramBlocks] = useState<Block[]>([])
+  const [programBlocks, setProgramBlocks] = useState<Block[]>(() => mission.initialBlocks ?? [])
   const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null)
   const [currentStepIdx, setCurrentStepIdx] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -156,6 +156,12 @@ export function MissionScreen({ mission, locale }: Props) {
         }
         if (mission.id === 'primeros-pasos-05') {
           void awardBadge(activeProfile.id, 'explorador-logico')
+        }
+        if (mission.id === 'isla-logica-01') {
+          void awardBadge(activeProfile.id, 'maestro-secuencias')
+        }
+        if (mission.id === 'isla-logica-08') {
+          void awardBadge(activeProfile.id, 'isla-logica-completada')
         }
       }
     } else {

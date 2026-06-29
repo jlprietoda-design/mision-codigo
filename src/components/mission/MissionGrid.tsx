@@ -96,12 +96,12 @@ export function MissionGrid({ mapConfig, currentStep, collectedItemIds }: Props)
                       className="select-none animate-pulse"
                       style={{ fontSize: cellSize * 0.5 }}
                     >
-                      🔋
+                      {mapConfig.goalEmoji ?? '🔋'}
                     </span>
                   )}
                   {item && !isWall && (
                     <span className="select-none" style={{ fontSize: cellSize * 0.4 }}>
-                      ✨
+                      {item.emoji ?? '✨'}
                     </span>
                   )}
                   {isStart && (

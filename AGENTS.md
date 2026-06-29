@@ -223,12 +223,18 @@ Robot mentor amable que acompaña al niño durante las misiones. En MVP usa pist
 | Panel familiar                                    | ✅ Perfiles infantiles con CRUD |
 | Panel del niño                                    | ✅ Avatar, saludo, accesos |
 | Mapa de mundos                                    | ✅ Con panel lateral de misiones y progreso |
-| Motor de misiones                                 | ✅ 5 misiones Nivel 0 jugables |
+| Motor de misiones                                 | ✅ 5 misiones Nivel 0 + 8 misiones Nivel 1 jugables |
 | Sistema de progreso e insignias                   | ✅ Completado     |
 | Landing page pública                              | ✅ Completada     |
+| Páginas secundarias                               | ✅ /como-funciona, /niveles, /familias, /seguridad, /donar |
 | Tema visual claro                                 | ✅ Completado     |
 | Cierre de sesión                                  | ✅ Completado     |
-| Internacionalización (i18n) ES/EN                 | ✅ Completada     |
-| Asistente Codi                                    | 🔲 Pendiente     |
-| Misiones Nivel 1                                  | 🔲 Pendiente     |
-| Páginas secundarias (/familias, /seguridad, etc.) | 🔲 Pendiente     |
+| Internacionalización (i18n) ES/EN                 | ✅ Completa, incluyendo contenido de misiones |
+| Asistente Codi con pistas progresivas             | ✅ Completado     |
+| Widget de donaciones                              | ✅ Completado     |
+| Nivel 0 — Primeros Pasos                          | ✅ 5 misiones     |
+| Nivel 1 — Isla Lógica                             | ✅ 8 misiones     |
+| Nivel 2 — Bosque de Bucles                        | ⏳ Pendiente     |
+| Panel de progreso para padres                     | ⏳ Pendiente     |
+| Página /colegios                                  | ⏳ Pendiente     |
+| Asistente Codi con IA real (Nivel 9)              | ⏳ Pendiente     |

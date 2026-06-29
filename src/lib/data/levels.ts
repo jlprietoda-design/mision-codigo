@@ -32,6 +32,7 @@ export const LEVELS: LevelData[] = [
     emoji: '🏝️',
     world_order: 1,
     status: 'in_progress',
+    firstMissionSlug: 'isla-logica-01',
   },
   {
     id: 2,

@@ -105,6 +105,19 @@ export function executeMission(blocks: Block[], mapConfig: MapConfig): Execution
       player.y = ny
 
       if (nx === mapConfig.goal.x && ny === mapConfig.goal.y) {
+        if (
+          mapConfig.requiredItem &&
+          !player.inventory.includes(mapConfig.requiredItem)
+        ) {
+          push('¡Necesitas el objeto requerido!')
+          earlyResult = {
+            success: false,
+            message: `¡Codi llegó a la meta pero le falta algo! Recoge el objeto necesario antes de llegar.`,
+            steps,
+            errorType: 'goal_not_reached' as const,
+          }
+          return false
+        }
         push('¡Meta alcanzada!')
         earlyResult = {
           success: true,
@@ -114,15 +127,7 @@ export function executeMission(blocks: Block[], mapConfig: MapConfig): Execution
         return false // stop — mission complete
       }
 
-      const itemKey = `${nx},${ny}`
-      const item = itemsOnMap.get(itemKey)
-      if (item) {
-        player.inventory.push(item.id)
-        itemsOnMap.delete(itemKey)
-        push(undefined, item.id)
-      } else {
-        push()
-      }
+      push()
       return true
     }
 
