@@ -235,7 +235,11 @@
     "codiSuccess": "You did it! You're amazing! 🎉",
     "codiFail": "So close... Want a hint for next time?",
     "codiHintButton": "Get a hint",
-    "codiNoMoreHints": "All hints used"
+    "codiNoMoreHints": "All hints used",
+    "repeatTimes": "times",
+    "repeatAddInside": "+ Add inside",
+    "repeatEditing": "✓ Done",
+    "addingInsideLoop": "Adding inside loop {num}"
   },
   "donarPage": {
     "title": "Support Mission Code",

@@ -118,6 +118,16 @@ export function executeMission(blocks: Block[], mapConfig: MapConfig): Execution
           }
           return false
         }
+        if (mapConfig.allItemsRequired && itemsOnMap.size > 0) {
+          push('¡Faltan objetos por recoger!')
+          earlyResult = {
+            success: false,
+            message: '¡Codi llegó a la meta pero le faltan objetos! Recoge todos los objetos del camino.',
+            steps,
+            errorType: 'goal_not_reached' as const,
+          }
+          return false
+        }
         push('¡Meta alcanzada!')
         earlyResult = {
           success: true,

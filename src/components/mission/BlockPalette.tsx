@@ -1,13 +1,14 @@
 'use client'
 
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import type { Block } from '@/lib/mission-engine/types'
 
 interface BlockMeta {
   labelKey: string
   icon: string
-  iconClass?: string  // tamaño/peso del icono en paleta y programa
-  preview?: string    // badge "🤖←" mostrado solo en la paleta
+  iconClass?: string
+  preview?: string
   bg: string
   border: string
   text: string
@@ -70,6 +71,9 @@ interface Props {
   programBlocks: Block[]
   onAddBlock: (type: string) => void
   onRemoveBlock: (index: number) => void
+  onAddChildBlock: (parentIdx: number, type: string) => void
+  onRemoveChildBlock: (parentIdx: number, childIdx: number) => void
+  onUpdateRepeatTimes: (idx: number, times: number) => void
   onExecute: () => void
   onReset: () => void
   onHint: () => void
@@ -81,61 +85,105 @@ export function BlockPalette({
   programBlocks,
   onAddBlock,
   onRemoveBlock,
+  onAddChildBlock,
+  onRemoveChildBlock,
+  onUpdateRepeatTimes,
   onExecute,
   onReset,
   onHint,
   isAnimating,
 }: Props) {
   const t = useTranslations('mision')
+  const [editingRepeatIdx, setEditingRepeatIdx] = useState<number | null>(null)
+
   const canExecute = programBlocks.length > 0 && !isAnimating
   const programFull = programBlocks.length >= MAX_PROGRAM
+
+  function handlePaletteClick(type: string) {
+    if (isAnimating) return
+    if (editingRepeatIdx !== null) {
+      if (type === 'repeat') return // no nested repeat via UI
+      onAddChildBlock(editingRepeatIdx, type)
+    } else {
+      if (!programFull) onAddBlock(type)
+    }
+  }
+
+  function handleRemoveBlock(idx: number) {
+    if (editingRepeatIdx === idx) setEditingRepeatIdx(null)
+    else if (editingRepeatIdx !== null && editingRepeatIdx > idx) setEditingRepeatIdx(editingRepeatIdx - 1)
+    onRemoveBlock(idx)
+  }
+
+  const isAddingToRepeat = editingRepeatIdx !== null
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
 
       {/* ── Available blocks ─────────────────────────────────── */}
       <div className="flex-shrink-0 p-3 border-b border-[#E0E0F0]">
-        <p className="text-xs font-semibold text-[#4a4a6a]/60 uppercase tracking-wider mb-2 px-1">
-          {t('availableBlocks')}
-        </p>
+        {isAddingToRepeat ? (
+          <div className="flex items-center justify-between bg-[#534AB7] text-white rounded-lg px-3 py-1.5 mb-2">
+            <span className="text-xs font-semibold">
+              {t('addingInsideLoop', { num: editingRepeatIdx! + 1 })}
+            </span>
+            <button
+              onClick={() => setEditingRepeatIdx(null)}
+              className="text-xs bg-white/20 hover:bg-white/30 rounded px-2 py-0.5 transition font-semibold"
+            >
+              {t('repeatEditing')}
+            </button>
+          </div>
+        ) : (
+          <p className="text-xs font-semibold text-[#4a4a6a]/60 uppercase tracking-wider mb-2 px-1">
+            {t('availableBlocks')}
+          </p>
+        )}
+
         <div className="flex flex-col gap-1.5">
           {availableBlocks.map((type) => {
             const meta = BLOCK_CATALOG[type]
             if (!meta) return null
+            const isRepeat = type === 'repeat'
+            const disabledByMode = isAddingToRepeat && isRepeat
+            const disabled = isAnimating || disabledByMode || (!isAddingToRepeat && programFull)
             return (
               <button
                 key={type}
-                onClick={() => !programFull && !isAnimating && onAddBlock(type)}
-                disabled={programFull || isAnimating}
+                onClick={() => !disabled && handlePaletteClick(type)}
+                disabled={disabled}
                 className={[
                   'w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-semibold',
                   'transition-all duration-150 select-none',
                   meta.bg,
                   meta.border,
                   meta.text,
-                  programFull || isAnimating ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer',
+                  disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer',
                 ].join(' ')}
               >
                 <span className={meta.iconClass ?? 'text-base'}>{meta.icon}</span>
                 <span className="flex-1 text-left">{t(meta.labelKey as Parameters<typeof t>[0])}</span>
-                {meta.preview && (
+                {meta.preview && !isAddingToRepeat && (
                   <span className="text-sm font-normal opacity-80 bg-white/70 rounded px-1.5 py-0.5 border border-current/10 tabular-nums">
                     {meta.preview}
                   </span>
                 )}
-                <span className="opacity-40 text-xs">{t('addBlock')}</span>
+                <span className="opacity-40 text-xs">
+                  {isAddingToRepeat && !isRepeat ? '→' : t('addBlock')}
+                </span>
               </button>
             )
           })}
         </div>
-        {programFull && (
+
+        {!isAddingToRepeat && programFull && (
           <p className="text-xs text-amber-600 mt-2 text-center">
             {t('maxBlocks', { max: MAX_PROGRAM })}
           </p>
         )}
       </div>
 
-      {/* ── Program title (fixed outside scroll) ─────────────── */}
+      {/* ── Program title ────────────────────────────────────── */}
       <div className="flex-shrink-0 px-4 pt-2.5 pb-1.5 border-b border-[#E0E0F0] bg-[#F8F9FF]">
         <p className="text-xs font-semibold text-[#4a4a6a]/60 uppercase tracking-wider">
           {t('myProgram')}{' '}
@@ -144,7 +192,8 @@ export function BlockPalette({
           </span>
         </p>
       </div>
-      {/* min-h-0 is required so overflow-y-scroll respects the flex container height */}
+
+      {/* min-h-0 required so overflow-y-scroll respects flex container height */}
       <div
         className="flex-1 min-h-0 overflow-y-scroll scrollbar-purple p-3 border-b border-[#E0E0F0]"
         style={{ scrollbarGutter: 'stable' }}
@@ -157,10 +206,131 @@ export function BlockPalette({
             </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1.5">
             {programBlocks.map((block, idx) => {
               const meta = BLOCK_CATALOG[block.type]
               if (!meta) return null
+
+              // ── Repeat block ──────────────────────────────────
+              if (block.type === 'repeat') {
+                const times = block.times ?? 2
+                const children = block.children ?? []
+                const isEditing = editingRepeatIdx === idx
+
+                return (
+                  <div
+                    key={idx}
+                    className={[
+                      'rounded-lg border',
+                      isEditing
+                        ? 'border-[#534AB7] shadow-[0_0_0_2px_rgba(83,74,183,0.15)]'
+                        : 'border-[#534AB7]/30',
+                      'bg-[#EEF0FF]',
+                    ].join(' ')}
+                  >
+                    {/* Repeat header */}
+                    <div className="flex items-center gap-1 px-2.5 py-2 min-w-0">
+                      <span className="text-[#4a4a6a]/40 font-mono text-[10px] w-4 text-right flex-shrink-0">
+                        {idx + 1}
+                      </span>
+                      <span className="text-sm flex-shrink-0">🔄</span>
+
+                      {/* Times counter — flex-shrink-0 so it never collapses */}
+                      <div className="flex items-center gap-0.5 flex-shrink-0">
+                        <button
+                          onClick={() => !isAnimating && onUpdateRepeatTimes(idx, Math.max(1, times - 1))}
+                          disabled={isAnimating || times <= 1}
+                          className="w-5 h-5 rounded border border-[#534AB7]/30 text-[#534AB7] text-xs flex items-center justify-center hover:bg-[#534AB7] hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed font-bold"
+                        >
+                          −
+                        </button>
+                        <span className="w-5 text-center text-sm font-bold text-[#534AB7] tabular-nums">
+                          {times}
+                        </span>
+                        <button
+                          onClick={() => !isAnimating && onUpdateRepeatTimes(idx, Math.min(10, times + 1))}
+                          disabled={isAnimating || times >= 10}
+                          className="w-5 h-5 rounded border border-[#534AB7]/30 text-[#534AB7] text-xs flex items-center justify-center hover:bg-[#534AB7] hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed font-bold"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      {/* Label absorbs remaining space so ✕ never overflows */}
+                      <span className="flex-1 min-w-0 text-[10px] text-[#534AB7]/60 truncate">
+                        {t('repeatTimes')}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => { if (!isAnimating) handleRemoveBlock(idx) }}
+                        disabled={isAnimating}
+                        className="flex-shrink-0 opacity-40 hover:opacity-80 active:opacity-100 transition-opacity text-xs px-1.5 py-0.5 rounded hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed"
+                        aria-label={`Eliminar bucle ${idx + 1}`}
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    {/* Children */}
+                    {children.length > 0 && (
+                      <div className="px-2.5 pb-1.5 flex flex-col gap-1 border-t border-[#534AB7]/10 pt-1.5 ml-5 border-l-2 border-l-[#534AB7]/20">
+                        {children.map((child, ci) => {
+                          const cm = BLOCK_CATALOG[child.type]
+                          if (!cm) return null
+                          return (
+                            <div
+                              key={ci}
+                              className={[
+                                'flex items-center gap-1.5 px-2 py-1.5 rounded border text-xs',
+                                cm.bg.split(' ')[0],
+                                cm.border,
+                                cm.text,
+                              ].join(' ')}
+                            >
+                              <span className="text-[#4a4a6a]/40 font-mono text-[9px] w-6 text-right flex-shrink-0">
+                                {idx + 1}.{ci + 1}
+                              </span>
+                              <span className={cm.iconClass ?? 'text-sm'}>{cm.icon}</span>
+                              <span className="flex-1 font-medium">
+                                {(child.type === 'move_forward' || child.type === 'turn_left' || child.type === 'turn_right') && (
+                                  <span className="opacity-50 mr-0.5">{cm.icon}</span>
+                                )}
+                                {t(cm.labelKey as Parameters<typeof t>[0])}
+                              </span>
+                              <button
+                                onClick={() => !isAnimating && onRemoveChildBlock(idx, ci)}
+                                disabled={isAnimating}
+                                className="opacity-30 hover:opacity-70 transition-opacity text-xs px-1 py-0.5 rounded disabled:cursor-not-allowed"
+                                aria-label={`Eliminar instrucción ${idx + 1}.${ci + 1}`}
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+
+                    {/* Add inside button */}
+                    {!isAnimating && (
+                      <button
+                        onClick={() => setEditingRepeatIdx(isEditing ? null : idx)}
+                        className={[
+                          'w-full text-[10px] font-semibold py-1.5 rounded-b-lg transition border-t',
+                          isEditing
+                            ? 'bg-[#534AB7] text-white border-[#534AB7]'
+                            : 'text-[#534AB7]/70 border-[#534AB7]/10 hover:bg-[#534AB7]/10',
+                        ].join(' ')}
+                      >
+                        {isEditing ? t('repeatEditing') : t('repeatAddInside')}
+                      </button>
+                    )}
+                  </div>
+                )
+              }
+
+              // ── Regular block ─────────────────────────────────
               return (
                 <div
                   key={idx}
@@ -176,13 +346,13 @@ export function BlockPalette({
                   </span>
                   <span className={meta.iconClass ?? 'text-base'}>{meta.icon}</span>
                   <span className="flex-1 text-sm font-medium">
-                    {meta.icon && (block.type === 'move_forward' || block.type === 'turn_left' || block.type === 'turn_right') && (
-                      <span className="opacity-50 mr-1">{meta.icon}</span>
+                    {(block.type === 'move_forward' || block.type === 'turn_left' || block.type === 'turn_right') && (
+                      <span className="opacity-50 mr-0.5">{meta.icon}</span>
                     )}
                     {t(meta.labelKey as Parameters<typeof t>[0])}
                   </span>
                   <button
-                    onClick={() => !isAnimating && onRemoveBlock(idx)}
+                    onClick={() => !isAnimating && handleRemoveBlock(idx)}
                     disabled={isAnimating}
                     className="opacity-30 hover:opacity-70 transition-opacity text-xs px-1 py-0.5 rounded disabled:cursor-not-allowed"
                     aria-label={`Eliminar bloque ${idx + 1}`}

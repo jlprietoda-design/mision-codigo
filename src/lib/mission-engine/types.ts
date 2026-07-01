@@ -46,4 +46,5 @@ export interface MapConfig {
   obstacles?: { x: number; y: number }[]
   items?: { x: number; y: number; id: string; emoji?: string }[]
   requiredItem?: string
+  allItemsRequired?: boolean
 }

@@ -100,11 +100,40 @@ export function MissionScreen({ mission, locale }: Props) {
   }
 
   function addBlock(type: string) {
-    setProgramBlocks((prev) => (prev.length < 20 ? [...prev, { type }] : prev))
+    const newBlock: Block = type === 'repeat'
+      ? { type: 'repeat', times: 2, children: [] }
+      : { type }
+    setProgramBlocks((prev) => (prev.length < 20 ? [...prev, newBlock] : prev))
   }
 
   function removeBlock(index: number) {
     setProgramBlocks((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  function addChildBlock(parentIdx: number, type: string) {
+    setProgramBlocks((prev) => {
+      const next = [...prev]
+      const parent = next[parentIdx]
+      next[parentIdx] = { ...parent, children: [...(parent.children ?? []), { type }] }
+      return next
+    })
+  }
+
+  function removeChildBlock(parentIdx: number, childIdx: number) {
+    setProgramBlocks((prev) => {
+      const next = [...prev]
+      const parent = next[parentIdx]
+      next[parentIdx] = { ...parent, children: (parent.children ?? []).filter((_, i) => i !== childIdx) }
+      return next
+    })
+  }
+
+  function updateRepeatTimes(idx: number, times: number) {
+    setProgramBlocks((prev) => {
+      const next = [...prev]
+      next[idx] = { ...next[idx], times }
+      return next
+    })
   }
 
   function handleReset() {
@@ -162,6 +191,12 @@ export function MissionScreen({ mission, locale }: Props) {
         }
         if (mission.id === 'isla-logica-08') {
           void awardBadge(activeProfile.id, 'isla-logica-completada')
+        }
+        if (mission.id === 'bosque-bucles-01') {
+          void awardBadge(activeProfile.id, 'detecta-patrones')
+        }
+        if (mission.id === 'bosque-bucles-08') {
+          void awardBadge(activeProfile.id, 'bosque-bucles-completado')
         }
       }
     } else {
@@ -263,6 +298,9 @@ export function MissionScreen({ mission, locale }: Props) {
             programBlocks={programBlocks}
             onAddBlock={addBlock}
             onRemoveBlock={removeBlock}
+            onAddChildBlock={addChildBlock}
+            onRemoveChildBlock={removeChildBlock}
+            onUpdateRepeatTimes={updateRepeatTimes}
             onExecute={handleExecute}
             onReset={handleReset}
             onHint={handleRequestHint}

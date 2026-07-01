@@ -235,7 +235,11 @@
     "codiSuccess": "¡Lo conseguiste! ¡Eres un crack! 🎉",
     "codiFail": "Casi casi... ¿Quieres una pista para la siguiente vez?",
     "codiHintButton": "Pedir pista",
-    "codiNoMoreHints": "Ya usaste todas las pistas"
+    "codiNoMoreHints": "Ya usaste todas las pistas",
+    "repeatTimes": "veces",
+    "repeatAddInside": "+ Añadir dentro",
+    "repeatEditing": "✓ Listo",
+    "addingInsideLoop": "Añadiendo dentro del bucle {num}"
   },
   "donarPage": {
     "title": "Apoya Misión Código",

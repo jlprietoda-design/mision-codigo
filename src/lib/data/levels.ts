@@ -42,7 +42,8 @@ export const LEVELS: LevelData[] = [
     title_en: 'Loop Forest',
     emoji: '🌲',
     world_order: 2,
-    status: 'available',
+    status: 'in_progress',
+    firstMissionSlug: 'bosque-bucles-01',
   },
   {
     id: 3,
