@@ -97,7 +97,9 @@
     "donateButton": "Donate",
     "perMonth": "/month",
     "securePayment": "Secure payment. You can cancel at any time.",
-    "thanks": "Thank you for supporting free education! 💜"
+    "thanks": "Thank you for supporting free education! 💜",
+    "donating": "Redirecting to payment...",
+    "errorGeneric": "Something went wrong. Please try again."
   },
   "footer": {
     "tagline": "Free educational platform for children to learn programming through gamified missions. No ads, no email for kids.",
@@ -437,5 +439,11 @@
     "contactDesc": "If you have any doubts about how we handle your child's data, write to us. We reply within 48 hours.",
     "contactEmail": "privacy@missioncode.com",
     "contactButton": "Send question →"
+  },
+  "donarGracias": {
+    "title": "Thank you for your support! 💜",
+    "subtitle": "Your donation helps keep Mission Code free so any child can learn to code, regardless of their background.",
+    "message": "You'll receive a receipt from Stripe at your email address. If you have any questions, reach us at donations@missioncode.com and we'll reply within 48 hours.",
+    "backHome": "Back to home"
   }
 }

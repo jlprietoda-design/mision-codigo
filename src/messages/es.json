@@ -97,7 +97,9 @@
     "donateButton": "Donar",
     "perMonth": "/mes",
     "securePayment": "Pago seguro. Puedes cancelar cuando quieras.",
-    "thanks": "¡Gracias por apoyar la educación gratuita! 💜"
+    "thanks": "¡Gracias por apoyar la educación gratuita! 💜",
+    "donating": "Redirigiendo al pago...",
+    "errorGeneric": "Algo salió mal. Inténtalo de nuevo."
   },
   "footer": {
     "tagline": "Plataforma educativa gratuita para que niños y niñas aprendan programación mediante misiones gamificadas. Sin anuncios, sin email para niños.",
@@ -437,5 +439,11 @@
     "contactDesc": "Si tienes dudas sobre cómo gestionamos los datos de tu hijo, escríbenos. Respondemos en menos de 48 horas.",
     "contactEmail": "privacidad@misioncodigo.com",
     "contactButton": "Enviar pregunta →"
+  },
+  "donarGracias": {
+    "title": "¡Gracias por tu apoyo! 💜",
+    "subtitle": "Tu donación ayuda a mantener Misión Código gratuito para que cualquier niño pueda aprender a programar, sin importar su situación.",
+    "message": "Recibirás un recibo de Stripe en tu email. Si tienes alguna pregunta, escríbenos a donaciones@misioncodigo.com y te responderemos en menos de 48 horas.",
+    "backHome": "Volver al inicio"
   }
 }
