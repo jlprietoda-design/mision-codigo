@@ -6,6 +6,8 @@ import type { Block } from '@/lib/mission-engine/types'
 interface BlockMeta {
   labelKey: string
   icon: string
+  iconClass?: string  // tamaño/peso del icono en paleta y programa
+  preview?: string    // badge "🤖←" mostrado solo en la paleta
   bg: string
   border: string
   text: string
@@ -14,21 +16,26 @@ interface BlockMeta {
 const BLOCK_CATALOG: Record<string, BlockMeta> = {
   move_forward: {
     labelKey: 'moveForward',
-    icon: '⬆️',
+    icon: '↑',
+    iconClass: 'text-xl font-bold leading-none',
     bg: 'bg-[#E8F8F5] hover:bg-[#d0f0e8] active:bg-[#c0e8dc]',
     border: 'border-[#00B894]/40',
     text: 'text-[#007a5e]',
   },
   turn_left: {
     labelKey: 'turnLeft',
-    icon: '↩️',
+    icon: '↺',
+    iconClass: 'text-xl font-bold leading-none',
+    preview: '🤖←',
     bg: 'bg-blue-50 hover:bg-blue-100 active:bg-blue-200',
     border: 'border-blue-200',
     text: 'text-blue-700',
   },
   turn_right: {
     labelKey: 'turnRight',
-    icon: '↪️',
+    icon: '↻',
+    iconClass: 'text-xl font-bold leading-none',
+    preview: '🤖→',
     bg: 'bg-blue-50 hover:bg-blue-100 active:bg-blue-200',
     border: 'border-blue-200',
     text: 'text-blue-700',
@@ -101,7 +108,7 @@ export function BlockPalette({
                 onClick={() => !programFull && !isAnimating && onAddBlock(type)}
                 disabled={programFull || isAnimating}
                 className={[
-                  'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border text-sm font-semibold',
+                  'w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-semibold',
                   'transition-all duration-150 select-none',
                   meta.bg,
                   meta.border,
@@ -109,9 +116,14 @@ export function BlockPalette({
                   programFull || isAnimating ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer',
                 ].join(' ')}
               >
-                <span className="text-base">{meta.icon}</span>
-                <span>{t(meta.labelKey as Parameters<typeof t>[0])}</span>
-                <span className="ml-auto opacity-40 text-xs">{t('addBlock')}</span>
+                <span className={meta.iconClass ?? 'text-base'}>{meta.icon}</span>
+                <span className="flex-1 text-left">{t(meta.labelKey as Parameters<typeof t>[0])}</span>
+                {meta.preview && (
+                  <span className="text-sm font-normal opacity-80 bg-white/70 rounded px-1.5 py-0.5 border border-current/10 tabular-nums">
+                    {meta.preview}
+                  </span>
+                )}
+                <span className="opacity-40 text-xs">{t('addBlock')}</span>
               </button>
             )
           })}
@@ -162,8 +174,11 @@ export function BlockPalette({
                   <span className="text-[#4a4a6a]/40 font-mono text-[10px] w-5 text-right flex-shrink-0">
                     {idx + 1}
                   </span>
-                  <span className="text-base">{meta.icon}</span>
+                  <span className={meta.iconClass ?? 'text-base'}>{meta.icon}</span>
                   <span className="flex-1 text-sm font-medium">
+                    {meta.icon && (block.type === 'move_forward' || block.type === 'turn_left' || block.type === 'turn_right') && (
+                      <span className="opacity-50 mr-1">{meta.icon}</span>
+                    )}
                     {t(meta.labelKey as Parameters<typeof t>[0])}
                   </span>
                   <button
