@@ -239,7 +239,11 @@
     "repeatTimes": "times",
     "repeatAddInside": "+ Add inside",
     "repeatEditing": "✓ Done",
-    "addingInsideLoop": "Adding inside loop {num}"
+    "addingInsideLoop": "Adding inside loop {num}",
+    "ifObstacle": "If wall ahead",
+    "ifHasItem": "If I have an item",
+    "ifOnItem": "If item here",
+    "addingInsideConditional": "Adding inside conditional {num}"
   },
   "donarPage": {
     "title": "Support Mission Code",

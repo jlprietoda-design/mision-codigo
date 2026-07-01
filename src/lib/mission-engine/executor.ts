@@ -197,6 +197,45 @@ export function executeMission(blocks: Block[], mapConfig: MapConfig): Execution
       return true
     }
 
+    // ── if_obstacle ───────────────────────────────────────────
+    if (block.type === 'if_obstacle') {
+      const { dx, dy } = DELTA[player.direction]
+      const nx = player.x + dx
+      const ny = player.y + dy
+      const isObstacle =
+        nx < 0 || nx >= mapConfig.width || ny < 0 || ny >= mapConfig.height ||
+        wallSet.has(`${nx},${ny}`)
+      if (isObstacle) {
+        const children = block.children ?? []
+        for (const child of children) {
+          if (!run(child) || earlyResult) return false
+        }
+      }
+      return !earlyResult
+    }
+
+    // ── if_has_item ───────────────────────────────────────────
+    if (block.type === 'if_has_item') {
+      if (player.inventory.length > 0) {
+        const children = block.children ?? []
+        for (const child of children) {
+          if (!run(child) || earlyResult) return false
+        }
+      }
+      return !earlyResult
+    }
+
+    // ── if_on_item ────────────────────────────────────────────
+    if (block.type === 'if_on_item') {
+      if (itemsOnMap.has(`${player.x},${player.y}`)) {
+        const children = block.children ?? []
+        for (const child of children) {
+          if (!run(child) || earlyResult) return false
+        }
+      }
+      return !earlyResult
+    }
+
     // Unknown block — skip silently
     return true
   }

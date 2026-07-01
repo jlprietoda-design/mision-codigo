@@ -62,7 +62,30 @@ const BLOCK_CATALOG: Record<string, BlockMeta> = {
     border: 'border-[#534AB7]/30',
     text: 'text-[#534AB7]',
   },
+  if_obstacle: {
+    labelKey: 'ifObstacle',
+    icon: '🚧',
+    bg: 'bg-red-50 hover:bg-red-100 active:bg-red-200',
+    border: 'border-red-200',
+    text: 'text-red-700',
+  },
+  if_has_item: {
+    labelKey: 'ifHasItem',
+    icon: '🎒',
+    bg: 'bg-orange-50 hover:bg-orange-100 active:bg-orange-200',
+    border: 'border-orange-200',
+    text: 'text-orange-700',
+  },
+  if_on_item: {
+    labelKey: 'ifOnItem',
+    icon: '📍',
+    bg: 'bg-yellow-50 hover:bg-yellow-100 active:bg-yellow-200',
+    border: 'border-yellow-200',
+    text: 'text-yellow-700',
+  },
 }
+
+const CONTAINER_BLOCKS = new Set(['repeat', 'if_obstacle', 'if_has_item', 'if_on_item'])
 
 const MAX_PROGRAM = 20
 
@@ -102,7 +125,7 @@ export function BlockPalette({
   function handlePaletteClick(type: string) {
     if (isAnimating) return
     if (editingRepeatIdx !== null) {
-      if (type === 'repeat') return // no nested repeat via UI
+      if (CONTAINER_BLOCKS.has(type)) return // no nested containers
       onAddChildBlock(editingRepeatIdx, type)
     } else {
       if (!programFull) onAddBlock(type)
@@ -125,7 +148,9 @@ export function BlockPalette({
         {isAddingToRepeat ? (
           <div className="flex items-center justify-between bg-[#534AB7] text-white rounded-lg px-3 py-1.5 mb-2">
             <span className="text-xs font-semibold">
-              {t('addingInsideLoop', { num: editingRepeatIdx! + 1 })}
+              {editingRepeatIdx !== null && programBlocks[editingRepeatIdx]?.type === 'repeat'
+                ? t('addingInsideLoop', { num: editingRepeatIdx + 1 })
+                : t('addingInsideConditional', { num: (editingRepeatIdx ?? 0) + 1 })}
             </span>
             <button
               onClick={() => setEditingRepeatIdx(null)}
@@ -321,6 +346,97 @@ export function BlockPalette({
                           isEditing
                             ? 'bg-[#534AB7] text-white border-[#534AB7]'
                             : 'text-[#534AB7]/70 border-[#534AB7]/10 hover:bg-[#534AB7]/10',
+                        ].join(' ')}
+                      >
+                        {isEditing ? t('repeatEditing') : t('repeatAddInside')}
+                      </button>
+                    )}
+                  </div>
+                )
+              }
+
+              // ── Conditional block ─────────────────────────────
+              if (CONTAINER_BLOCKS.has(block.type) && block.type !== 'repeat') {
+                const children = block.children ?? []
+                const isEditing = editingRepeatIdx === idx
+
+                return (
+                  <div
+                    key={idx}
+                    className={[
+                      'rounded-lg border',
+                      isEditing
+                        ? `${meta.border} shadow-[0_0_0_2px_rgba(0,0,0,0.07)]`
+                        : meta.border,
+                      meta.bg.split(' ')[0],
+                    ].join(' ')}
+                  >
+                    {/* Conditional header */}
+                    <div className="flex items-center gap-1 px-2.5 py-2 min-w-0">
+                      <span className="text-[#4a4a6a]/40 font-mono text-[10px] w-4 text-right flex-shrink-0">
+                        {idx + 1}
+                      </span>
+                      <span className="text-sm flex-shrink-0">{meta.icon}</span>
+                      <span className={['flex-1 min-w-0 text-xs font-semibold truncate', meta.text].join(' ')}>
+                        {t(meta.labelKey as Parameters<typeof t>[0])}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => { if (!isAnimating) handleRemoveBlock(idx) }}
+                        disabled={isAnimating}
+                        className="flex-shrink-0 opacity-40 hover:opacity-80 active:opacity-100 transition-opacity text-xs px-1.5 py-0.5 rounded hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed"
+                        aria-label={`Eliminar bloque ${idx + 1}`}
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    {/* Children */}
+                    {children.length > 0 && (
+                      <div className="px-2.5 pb-1.5 flex flex-col gap-1 border-t border-current/10 pt-1.5 ml-5 border-l-2 border-l-current/20">
+                        {children.map((child, ci) => {
+                          const cm = BLOCK_CATALOG[child.type]
+                          if (!cm) return null
+                          return (
+                            <div
+                              key={ci}
+                              className={[
+                                'flex items-center gap-1.5 px-2 py-1.5 rounded border text-xs',
+                                cm.bg.split(' ')[0],
+                                cm.border,
+                                cm.text,
+                              ].join(' ')}
+                            >
+                              <span className="text-[#4a4a6a]/40 font-mono text-[9px] w-6 text-right flex-shrink-0">
+                                {idx + 1}.{ci + 1}
+                              </span>
+                              <span className={cm.iconClass ?? 'text-sm'}>{cm.icon}</span>
+                              <span className="flex-1 font-medium">
+                                {t(cm.labelKey as Parameters<typeof t>[0])}
+                              </span>
+                              <button
+                                onClick={() => !isAnimating && onRemoveChildBlock(idx, ci)}
+                                disabled={isAnimating}
+                                className="opacity-30 hover:opacity-70 transition-opacity text-xs px-1 py-0.5 rounded disabled:cursor-not-allowed"
+                                aria-label={`Eliminar instrucción ${idx + 1}.${ci + 1}`}
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+
+                    {/* Add inside button */}
+                    {!isAnimating && (
+                      <button
+                        onClick={() => setEditingRepeatIdx(isEditing ? null : idx)}
+                        className={[
+                          'w-full text-[10px] font-semibold py-1.5 rounded-b-lg transition border-t',
+                          isEditing
+                            ? `bg-[#534AB7] text-white border-[#534AB7]`
+                            : `${meta.text} border-current/10 hover:bg-current/5`,
                         ].join(' ')}
                       >
                         {isEditing ? t('repeatEditing') : t('repeatAddInside')}

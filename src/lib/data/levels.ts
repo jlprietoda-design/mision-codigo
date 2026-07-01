@@ -53,7 +53,8 @@ export const LEVELS: LevelData[] = [
     title_en: 'Conditional City',
     emoji: '🏙️',
     world_order: 3,
-    status: 'locked',
+    status: 'in_progress',
+    firstMissionSlug: 'ciudad-condicional-01',
   },
   {
     id: 4,

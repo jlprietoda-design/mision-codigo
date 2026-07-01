@@ -100,8 +100,11 @@ export function MissionScreen({ mission, locale }: Props) {
   }
 
   function addBlock(type: string) {
+    const CONDITIONAL_TYPES = ['if_obstacle', 'if_has_item', 'if_on_item']
     const newBlock: Block = type === 'repeat'
       ? { type: 'repeat', times: 2, children: [] }
+      : CONDITIONAL_TYPES.includes(type)
+      ? { type, children: [] }
       : { type }
     setProgramBlocks((prev) => (prev.length < 20 ? [...prev, newBlock] : prev))
   }
@@ -197,6 +200,12 @@ export function MissionScreen({ mission, locale }: Props) {
         }
         if (mission.id === 'bosque-bucles-08') {
           void awardBadge(activeProfile.id, 'bosque-bucles-completado')
+        }
+        if (mission.id === 'ciudad-condicional-01') {
+          void awardBadge(activeProfile.id, 'primera-condicion')
+        }
+        if (mission.id === 'ciudad-condicional-08') {
+          void awardBadge(activeProfile.id, 'ciudad-condicional-completada')
         }
       }
     } else {

@@ -239,7 +239,11 @@
     "repeatTimes": "veces",
     "repeatAddInside": "+ Añadir dentro",
     "repeatEditing": "✓ Listo",
-    "addingInsideLoop": "Añadiendo dentro del bucle {num}"
+    "addingInsideLoop": "Añadiendo dentro del bucle {num}",
+    "ifObstacle": "Si hay muro",
+    "ifHasItem": "Si tengo objeto",
+    "ifOnItem": "Si hay objeto aquí",
+    "addingInsideConditional": "Añadiendo dentro del condicional {num}"
   },
   "donarPage": {
     "title": "Apoya Misión Código",
