@@ -213,6 +213,19 @@ Robot mentor amable que acompaña al niño durante las misiones. En MVP usa pist
 **Privadas** (protegidas por `src/proxy.ts`, redirigen a `/login?next=<ruta>` sin sesión):
 `/app/familia` | `/app/perfil/[childId]` | `/app/mapa` | `/app/mision/[misionId]` | `/app/progreso/[childId]`
 
+## Variables de entorno
+
+| Variable                          | Descripción                                                        |
+|-----------------------------------|--------------------------------------------------------------------|
+| `NEXT_PUBLIC_SUPABASE_URL`        | URL del proyecto Supabase                                          |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`   | Clave pública de Supabase (anon)                                   |
+| `SUPABASE_SERVICE_ROLE_KEY`       | Clave de servicio de Supabase — solo en servidor, nunca exponer    |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Clave pública de Stripe (prefijo `pk_`)                        |
+| `STRIPE_SECRET_KEY`               | Clave secreta de Stripe (prefijo `sk_`) — solo en servidor        |
+| `STRIPE_WEBHOOK_SECRET`           | Secret del webhook de Stripe (prefijo `whsec_`) — obtener con `stripe listen` |
+| `NEXT_PUBLIC_BASE_URL`            | URL base de la app (`http://localhost:3000` en local, dominio en producción) |
+| `NEXT_PUBLIC_CONTACT_EMAIL`       | Email de contacto para donaciones — cambiar en producción          |
+
 ## Estado actual del proyecto
 
 | Área                                              | Estado           |

@@ -443,7 +443,7 @@
   "donarGracias": {
     "title": "¡Gracias por tu apoyo! 💜",
     "subtitle": "Tu donación ayuda a mantener Misión Código gratuito para que cualquier niño pueda aprender a programar, sin importar su situación.",
-    "message": "Recibirás un recibo de Stripe en tu email. Si tienes alguna pregunta, escríbenos a donaciones@misioncodigo.com y te responderemos en menos de 48 horas.",
+    "message": "Recibirás un recibo de Stripe en tu email. Si tienes alguna pregunta, escríbenos a {contactEmail} y te responderemos en menos de 48 horas.",
     "backHome": "Volver al inicio"
   }
 }

@@ -16,6 +16,7 @@ export default async function DonarGraciasPage({ params }: Props) {
   } = await supabase.auth.getUser()
 
   const t = await getTranslations('donarGracias')
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'donaciones@misioncodigo.com'
 
   return (
     <>
@@ -39,7 +40,7 @@ export default async function DonarGraciasPage({ params }: Props) {
             {/* Confirmation message */}
             <div className="bg-[#E8F8F5] border border-[#00B894]/30 rounded-2xl p-5 mb-8 text-left">
               <p className="text-[#007a5e] text-sm leading-relaxed">
-                {t('message')}
+                {t('message', { contactEmail })}
               </p>
             </div>
 

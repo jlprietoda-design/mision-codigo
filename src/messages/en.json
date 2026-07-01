@@ -443,7 +443,7 @@
   "donarGracias": {
     "title": "Thank you for your support! 💜",
     "subtitle": "Your donation helps keep Mission Code free so any child can learn to code, regardless of their background.",
-    "message": "You'll receive a receipt from Stripe at your email address. If you have any questions, reach us at donations@missioncode.com and we'll reply within 48 hours.",
+    "message": "You'll receive a receipt from Stripe at your email address. If you have any questions, reach us at {contactEmail} and we'll reply within 48 hours.",
     "backHome": "Back to home"
   }
 }
